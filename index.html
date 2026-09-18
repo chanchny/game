@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>DONT WAKE THE BULLDOG! - Retro 8-bit Online</title>
+  <title>BULLDOG GAME - Retro 8-bit Online</title>
   <!-- 8비트 레트로 폰트 및 한국어 폰트 -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -171,6 +171,7 @@
       z-index: 10;
     }
 
+    /* ★★★ [수정]: X-SPACE 배솔찬이 만든 크레딧 태그 ★★★ */
     .creator-tag {
       font-family: 'Noto Sans KR', sans-serif;
       font-size: 13px;
@@ -178,15 +179,16 @@
       color: #ffde59;
       letter-spacing: 2px;
       text-shadow: 0 0 8px rgba(255, 222, 89, 0.8), 2px 2px 0 #000;
-      margin-bottom: 6px;
+      margin-bottom: 8px;
       animation: pulse 1.5s infinite alternate;
     }
 
     .overlay h2 {
-      font-size: 18px;
+      font-size: 20px;
       color: #ff3344;
-      margin-bottom: 10px;
+      margin-bottom: 12px;
       line-height: 1.4;
+      letter-spacing: 1px;
       animation: pulse 0.9s infinite alternate;
     }
 
@@ -271,7 +273,7 @@
       text-shadow: 1px 1px 0 rgba(255,255,255,0.4);
     }
 
-    /* 실시간 온라인 랭킹 리더보드 */
+    /* 실시간 온라인 랭킹 리더보드 (TOP 15) */
     .leaderboard-card {
       width: 100%;
       max-width: 560px;
@@ -340,28 +342,60 @@
       border: 2px solid #ffd700;
       background: #2b2512;
       color: #ffd700;
+      box-shadow: 0 0 10px rgba(255, 215, 0, 0.2);
     }
     .rank-item.top2 {
-      border: 2px solid #c0c0c0;
-      background: #23272c;
+      border: 2px solid #e0e0e0;
+      background: #24292f;
+      color: #e0e0e0;
     }
     .rank-item.top3 {
       border: 2px solid #cd7f32;
-      background: #271f1a;
+      background: #271e19;
+      color: #e0a370;
     }
 
     .rank-info {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
       font-family: 'Noto Sans KR', sans-serif;
       font-weight: 700;
     }
 
     .rank-num {
       font-family: 'Press Start 2P', monospace;
-      font-size: 11px;
-      width: 24px;
+      font-size: 10px;
+      width: 32px;
+    }
+
+    .crown-icon {
+      font-size: 13px;
+      margin-right: 2px;
+      display: inline-block;
+      animation: crownBounce 1s infinite alternate ease-in-out;
+    }
+
+    .crown-gold { filter: drop-shadow(0 0 4px #ffd700); }
+    .crown-silver { filter: drop-shadow(0 0 4px #ffffff) grayscale(0.8) contrast(1.2); }
+    .crown-bronze { filter: drop-shadow(0 0 4px #cd7f32) sepia(1) saturate(3) hue-rotate(-20deg); }
+
+    .crying-emoji {
+      font-size: 13px;
+      margin-left: 4px;
+      display: inline-block;
+      animation: shake 1.5s infinite ease-in-out;
+    }
+
+    @keyframes crownBounce {
+      0% { transform: translateY(0); }
+      100% { transform: translateY(-2px); }
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20%, 60% { transform: translateX(-2px); }
+      40%, 80% { transform: translateX(2px); }
     }
 
     .empty-msg {
@@ -388,8 +422,9 @@
       
       <!-- 오버레이 화면 -->
       <div id="gameOverlay" class="overlay">
-        <div class="creator-tag">배솔찬이 만든</div>
-        <h2 id="overlayTitle">SLEEPING BULLDOG</h2>
+        <!-- ★ 수정된 타이틀 섹션 ★ -->
+        <div class="creator-tag">X-SPACE 배솔찬이 만든</div>
+        <h2 id="overlayTitle">BULLDOG GAME</h2>
         <p id="overlayDesc">
           ⚠️ 예민보스 불독의 뼈를 훔치세요!<br>
           불독이 <b>Grrr.. 뒤척일 때</b> 건드리면 극대노합니다.<br>
@@ -433,10 +468,10 @@
     </div>
   </div>
 
-  <!-- 실시간 온라인 랭킹 리더보드 -->
+  <!-- 실시간 온라인 랭킹 리더보드 (TOP 15) -->
   <div class="leaderboard-card">
     <div class="leaderboard-header">
-      <div class="leaderboard-title">🏆 LIVE LEADERBOARD (TOP 10)</div>
+      <div class="leaderboard-title">🏆 LIVE LEADERBOARD (TOP 15)</div>
       <div class="live-indicator">
         <div class="live-dot"></div>
         <span>실시간 연동 중</span>
@@ -459,16 +494,13 @@
       measurementId: "G-17GZKF04BJ"
     };
 
-    // Firebase 초기화
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
 
-    // 캔버스 설정
     const canvas = document.getElementById('gameCanvas');
     const ctx = canvas.getContext('2d');
     ctx.imageSmoothingEnabled = false;
 
-    // 사운드
     const AudioContext = window.AudioContext || window.webkitAudioContext;
     let audioCtx;
 
@@ -511,7 +543,6 @@
     let handAnim = 0;
     let snoreFrame = 0;
 
-    // 캐시
     const scoreVal = document.getElementById('scoreVal');
     const timeVal = document.getElementById('timeVal');
     const meterFill = document.getElementById('meterFill');
@@ -642,21 +673,18 @@
       }, 750);
     }
 
-    // ★★★ [수정 핵심 1]: 닉네임별 최고 기록일 때만 업데이트 ★★★
     function saveScoreToFirebase(name, finalScore) {
       if (finalScore <= 0) return;
       const userDocRef = db.collection('scores').doc(name);
 
       userDocRef.get().then((doc) => {
         if (!doc.exists) {
-          // 처음 기록하는 사용자면 바로 등록
           userDocRef.set({
             name: name,
             score: finalScore,
             updatedAt: firebase.firestore.FieldValue.serverTimestamp()
           });
         } else {
-          // 기존 기록이 있을 경우, 이번 점수가 더 높을 때만 갱신!
           const prevScore = doc.data().score || 0;
           if (finalScore > prevScore) {
             userDocRef.set({
@@ -671,7 +699,7 @@
       });
     }
 
-    // ★★★ [수정 핵심 2]: 1유저당 1개의 최고 기록으로 Top 10 필터링 & 정렬 ★★★
+    // TOP 15 + 왕관 + 이모티콘 렌더링
     db.collection('scores')
       .orderBy('score', 'desc')
       .onSnapshot((snapshot) => {
@@ -680,7 +708,6 @@
           return;
         }
 
-        // 닉네임 중복을 걸러내고 유저당 최고 기록만 모음
         const uniqueUsers = new Map();
         snapshot.forEach((doc) => {
           const data = doc.data();
@@ -691,25 +718,38 @@
           }
         });
 
-        // 점수 순으로 정렬 후 상위 10명만 추출
         const sortedList = Array.from(uniqueUsers.entries())
           .map(([name, score]) => ({ name, score }))
           .sort((a, b) => b.score - a.score)
-          .slice(0, 10);
+          .slice(0, 15);
 
         let html = '';
         let rank = 1;
         sortedList.forEach((item) => {
           let topClass = '';
-          if (rank === 1) topClass = 'top1';
-          else if (rank === 2) topClass = 'top2';
-          else if (rank === 3) topClass = 'top3';
+          let crownTag = '';
+          let emojiTag = '';
+
+          if (rank === 1) {
+            topClass = 'top1';
+            crownTag = '<span class="crown-icon crown-gold">👑</span>';
+          } else if (rank === 2) {
+            topClass = 'top2';
+            crownTag = '<span class="crown-icon crown-silver">👑</span>';
+          } else if (rank === 3) {
+            topClass = 'top3';
+            crownTag = '<span class="crown-icon crown-bronze">👑</span>';
+          }
+
+          if (rank >= 10) {
+            emojiTag = '<span class="crying-emoji">😭</span>';
+          }
 
           html += `
             <div class="rank-item ${topClass}">
               <div class="rank-info">
                 <span class="rank-num">#${rank}</span>
-                <span>${item.name}</span>
+                <span>${crownTag}${item.name}${emojiTag}</span>
               </div>
               <div style="font-family:'Press Start 2P', monospace; color:#ffde59;">${item.score} 🦴</div>
             </div>
@@ -722,7 +762,7 @@
         rankList.innerHTML = `<div class="empty-msg" style="color:#ff5252;">순위표 연결 중... (잠시 후 다시 시도)</div>`;
       });
 
-    // 그래픽 렌더링
+    // 그래픽 렌더러
     function render() {
       ctx.fillStyle = '#161329';
       ctx.fillRect(0, 0, 240, 175);
