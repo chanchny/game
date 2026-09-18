@@ -448,7 +448,7 @@
   </div>
 
   <script>
-    // ★★★ 유저분의 Firebase 프로젝트 설정값 연결 완료 ★★★
+    // Firebase 프로젝트 설정값
     const firebaseConfig = {
       apiKey: "AIzaSyBF20RxT7I3n9LD0EjDy_NDamW5V22p_7g",
       authDomain: "project-2017346322365333590.firebaseapp.com",
@@ -525,7 +525,6 @@
     const nameBox = document.getElementById('nameBox');
     const rankList = document.getElementById('rankList');
 
-    // 이전 닉네임 불러오기
     if (localStorage.getItem('bulldog_nickname')) {
       nicknameInput.value = localStorage.getItem('bulldog_nickname');
     }
@@ -631,7 +630,6 @@
       stealBtn.disabled = true;
       soundBite();
 
-      // 온라인 DB에 점수 저장
       const currentName = nicknameInput.value.trim() || '익명 도둑';
       saveScoreToFirebase(currentName, score);
 
@@ -644,32 +642,64 @@
       }, 750);
     }
 
-    // ★ Firestore 실시간 점수 등록
+    // ★★★ [수정 핵심 1]: 닉네임별 최고 기록일 때만 업데이트 ★★★
     function saveScoreToFirebase(name, finalScore) {
       if (finalScore <= 0) return;
-      db.collection('scores').add({
-        name: name,
-        score: finalScore,
-        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      const userDocRef = db.collection('scores').doc(name);
+
+      userDocRef.get().then((doc) => {
+        if (!doc.exists) {
+          // 처음 기록하는 사용자면 바로 등록
+          userDocRef.set({
+            name: name,
+            score: finalScore,
+            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+          });
+        } else {
+          // 기존 기록이 있을 경우, 이번 점수가 더 높을 때만 갱신!
+          const prevScore = doc.data().score || 0;
+          if (finalScore > prevScore) {
+            userDocRef.set({
+              name: name,
+              score: finalScore,
+              updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            });
+          }
+        }
       }).catch(err => {
         console.error("점수 저장 실패:", err);
       });
     }
 
-    // ★ Firestore 실시간 리더보드 수신 (onSnapshot)
+    // ★★★ [수정 핵심 2]: 1유저당 1개의 최고 기록으로 Top 10 필터링 & 정렬 ★★★
     db.collection('scores')
       .orderBy('score', 'desc')
-      .limit(10)
       .onSnapshot((snapshot) => {
         if (snapshot.empty) {
           rankList.innerHTML = `<div class="empty-msg">아직 기록이 없습니다. 첫 챔피언이 되어보세요!</div>`;
           return;
         }
 
-        let html = '';
-        let rank = 1;
+        // 닉네임 중복을 걸러내고 유저당 최고 기록만 모음
+        const uniqueUsers = new Map();
         snapshot.forEach((doc) => {
           const data = doc.data();
+          const userName = data.name;
+          const userScore = data.score;
+          if (!uniqueUsers.has(userName) || uniqueUsers.get(userName) < userScore) {
+            uniqueUsers.set(userName, userScore);
+          }
+        });
+
+        // 점수 순으로 정렬 후 상위 10명만 추출
+        const sortedList = Array.from(uniqueUsers.entries())
+          .map(([name, score]) => ({ name, score }))
+          .sort((a, b) => b.score - a.score)
+          .slice(0, 10);
+
+        let html = '';
+        let rank = 1;
+        sortedList.forEach((item) => {
           let topClass = '';
           if (rank === 1) topClass = 'top1';
           else if (rank === 2) topClass = 'top2';
@@ -679,9 +709,9 @@
             <div class="rank-item ${topClass}">
               <div class="rank-info">
                 <span class="rank-num">#${rank}</span>
-                <span>${data.name}</span>
+                <span>${item.name}</span>
               </div>
-              <div style="font-family:'Press Start 2P', monospace; color:#ffde59;">${data.score} 🦴</div>
+              <div style="font-family:'Press Start 2P', monospace; color:#ffde59;">${item.score} 🦴</div>
             </div>
           `;
           rank++;
@@ -692,12 +722,11 @@
         rankList.innerHTML = `<div class="empty-msg" style="color:#ff5252;">순위표 연결 중... (잠시 후 다시 시도)</div>`;
       });
 
-    // 캔버스 그래픽 렌더러
+    // 그래픽 렌더링
     function render() {
       ctx.fillStyle = '#161329';
       ctx.fillRect(0, 0, 240, 175);
 
-      // 카펫 & 쿠션
       ctx.fillStyle = '#3d1c2e';
       ctx.beginPath();
       ctx.ellipse(140, 125, 100, 42, 0, 0, Math.PI * 2);
