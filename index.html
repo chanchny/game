@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>BULLDOG GAME - Retro 8-bit Online</title>
   <!-- 8비트 레트로 폰트 및 한국어 폰트 -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -33,30 +33,30 @@
       align-items: center;
       justify-content: flex-start;
       min-height: 100vh;
-      padding: 16px 12px 40px;
+      padding: 12px 10px 30px;
       overflow-x: hidden;
     }
 
     .game-cabinet {
       position: relative;
       background: #1f2833;
-      border: 6px solid #c5a059;
-      border-radius: 16px;
-      padding: 16px;
-      box-shadow: 0 0 45px rgba(0, 0, 0, 0.95), inset 0 0 15px rgba(0, 0, 0, 0.8);
+      border: 5px solid #c5a059;
+      border-radius: 14px;
+      padding: 12px;
+      box-shadow: 0 0 35px rgba(0, 0, 0, 0.95);
       display: flex;
       flex-direction: column;
       align-items: center;
       width: 100%;
-      max-width: 500px;
+      max-width: 460px;
     }
 
     .hud {
       width: 100%;
       display: flex;
       justify-content: space-between;
-      margin-bottom: 12px;
-      font-size: 12px;
+      margin-bottom: 8px;
+      font-size: 11px;
       color: #ffde59;
       text-shadow: 2px 2px #000;
     }
@@ -64,13 +64,11 @@
     .screen-wrapper {
       position: relative;
       width: 100%;
-      aspect-ratio: 240 / 175;
-      max-height: 330px;
-      border: 4px solid #45a29e;
+      aspect-ratio: 240 / 180;
+      border: 3px solid #45a29e;
       border-radius: 8px;
       overflow: hidden;
       background: #111;
-      box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.9);
     }
 
     canvas {
@@ -85,21 +83,21 @@
       content: " ";
       position: absolute;
       top: 0; left: 0; bottom: 0; right: 0;
-      background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.35) 50%);
+      background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.3) 50%);
       background-size: 100% 4px;
       pointer-events: none;
     }
 
     .danger-meter-wrapper {
       width: 100%;
-      margin-top: 14px;
+      margin-top: 10px;
       display: flex;
       flex-direction: column;
-      gap: 6px;
+      gap: 4px;
     }
 
     .danger-label {
-      font-size: 11px;
+      font-size: 10px;
       color: #ff5252;
       display: flex;
       justify-content: space-between;
@@ -108,9 +106,9 @@
 
     .meter-border {
       width: 100%;
-      height: 22px;
+      height: 20px;
       background: #0b0c10;
-      border: 3px solid #66fcf1;
+      border: 2px solid #66fcf1;
       border-radius: 4px;
       padding: 2px;
     }
@@ -123,9 +121,8 @@
     }
 
     .controls {
-      margin-top: 16px;
+      margin-top: 12px;
       display: flex;
-      gap: 16px;
       width: 100%;
     }
 
@@ -134,103 +131,93 @@
       border: none;
       outline: none;
       cursor: pointer;
-      padding: 16px 0;
-      flex: 1;
-      font-size: 14px;
+      padding: 15px 0;
+      width: 100%;
+      font-size: 13px;
       color: #000;
       background: #ffde59;
-      box-shadow: 0 6px 0 #b38b14, 0 8px 10px rgba(0,0,0,0.5);
+      box-shadow: 0 5px 0 #b38b14, 0 6px 8px rgba(0,0,0,0.5);
       border-radius: 6px;
-      transition: all 0.05s;
+      transition: transform 0.05s;
       -webkit-appearance: none;
     }
 
     .steal-btn:active {
-      transform: translateY(4px);
+      transform: translateY(3px);
       box-shadow: 0 2px 0 #b38b14;
     }
 
     .steal-btn:disabled {
-      background: #555;
-      box-shadow: 0 4px 0 #333;
+      background: #444 !important;
+      box-shadow: 0 4px 0 #222 !important;
       cursor: not-allowed;
-      color: #888;
+      color: #777 !important;
     }
 
+    /* 오버레이 창 최적화 */
     .overlay {
       position: absolute;
       top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(0, 0, 0, 0.92);
+      background: rgba(0, 0, 0, 0.93);
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
+      justify-content: space-evenly;
       text-align: center;
-      padding: 14px;
-      z-index: 10;
+      padding: 10px;
+      z-index: 20;
     }
 
     .creator-tag {
       font-family: 'Noto Sans KR', sans-serif;
-      font-size: 12px;
+      font-size: 11px;
       font-weight: 900;
       color: #ffde59;
-      letter-spacing: 1.5px;
-      text-shadow: 0 0 8px rgba(255, 222, 89, 0.8), 2px 2px 0 #000;
-      margin-bottom: 6px;
-      animation: pulse 1.5s infinite alternate;
+      letter-spacing: 1px;
+      text-shadow: 0 0 6px rgba(255, 222, 89, 0.8);
     }
 
     .overlay h2 {
-      font-size: 18px;
+      font-size: 16px;
       color: #ff3344;
-      margin-bottom: 8px;
-      line-height: 1.3;
-      letter-spacing: 1px;
-      animation: pulse 0.9s infinite alternate;
+      line-height: 1.2;
     }
 
     .overlay p {
       font-size: 9px;
       color: #c5a059;
-      line-height: 1.6;
-      margin-bottom: 12px;
+      line-height: 1.4;
     }
 
     .name-input-box {
-      margin-bottom: 12px;
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 4px;
+      gap: 3px;
     }
 
     .name-input-box label {
       font-family: 'Noto Sans KR', sans-serif;
-      font-size: 11px;
+      font-size: 10px;
       color: #66fcf1;
     }
 
     .nickname-input {
       font-family: 'Noto Sans KR', sans-serif;
-      font-size: 14px;
+      font-size: 13px;
       font-weight: 700;
-      padding: 6px 12px;
+      padding: 5px 10px;
       border: 2px solid #ffde59;
       background: #111;
       color: #fff;
       border-radius: 6px;
       text-align: center;
       outline: none;
-      width: 160px;
+      width: 150px;
       -webkit-appearance: none;
     }
 
-    @keyframes pulse {
-      0% { transform: scale(1); }
-      100% { transform: scale(1.05); }
-    }
-
+    /* 발바닥 버튼 크기 및 터치 영역 확실하게 고정 */
     .paw-start-btn {
       position: relative;
       background: none;
@@ -241,92 +228,83 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 4px;
-      transition: transform 0.1s ease;
+      padding: 2px;
       -webkit-appearance: none;
+      touch-action: manipulation;
     }
 
     .paw-start-btn:active {
-      transform: scale(0.95);
+      transform: scale(0.92);
     }
 
     .paw-start-btn svg {
-      width: 110px;
-      height: 90px;
-      filter: drop-shadow(0 5px 0 #b38b14) drop-shadow(0 8px 12px rgba(0,0,0,0.7));
+      width: 95px;
+      height: 75px;
+      filter: drop-shadow(0 4px 0 #b38b14);
+      pointer-events: none;
     }
 
     .paw-text {
       position: absolute;
-      bottom: 16px;
+      bottom: 12px;
       font-family: 'Press Start 2P', monospace;
-      font-size: 11px;
+      font-size: 10px;
       font-weight: 900;
       color: #1a0f00;
-      letter-spacing: 1px;
       pointer-events: none;
-      text-shadow: 1px 1px 0 rgba(255,255,255,0.4);
     }
 
     .leaderboard-card {
       width: 100%;
-      max-width: 500px;
-      margin-top: 20px;
+      max-width: 460px;
+      margin-top: 16px;
       background: #121820;
-      border: 4px solid #ffde59;
+      border: 3px solid #ffde59;
       border-radius: 12px;
-      padding: 14px;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.8);
+      padding: 12px;
     }
 
     .leaderboard-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 12px;
+      margin-bottom: 10px;
       border-bottom: 2px dashed #45a29e;
-      padding-bottom: 8px;
+      padding-bottom: 6px;
     }
 
     .leaderboard-title {
-      font-size: 11px;
+      font-size: 10px;
       color: #ffde59;
-      letter-spacing: 1px;
     }
 
     .live-indicator {
       font-family: 'Noto Sans KR', sans-serif;
-      font-size: 10px;
+      font-size: 9px;
       color: #4caf50;
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 4px;
     }
 
     .live-dot {
-      width: 8px;
-      height: 8px;
+      width: 6px;
+      height: 6px;
       background: #4caf50;
       border-radius: 50%;
-      animation: blink 1s infinite alternate;
-    }
-
-    @keyframes blink {
-      0% { opacity: 0.3; }
-      100% { opacity: 1; }
     }
 
     .rank-list {
       display: flex;
       flex-direction: column;
-      gap: 6px;
+      gap: 5px;
     }
 
     .rank-item {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 8px 10px;
+      padding: 6px 10px;
       background: #1f2833;
       border-radius: 6px;
       font-size: 9px;
@@ -336,7 +314,6 @@
       border: 2px solid #ffd700;
       background: #2b2512;
       color: #ffd700;
-      box-shadow: 0 0 10px rgba(255, 215, 0, 0.2);
     }
     .rank-item.top2 {
       border: 2px solid #e0e0e0;
@@ -360,44 +337,18 @@
     .rank-num {
       font-family: 'Press Start 2P', monospace;
       font-size: 9px;
-      width: 28px;
+      width: 26px;
     }
 
-    .crown-icon {
-      font-size: 12px;
-      margin-right: 2px;
-      display: inline-block;
-      animation: crownBounce 1s infinite alternate ease-in-out;
-    }
-
-    .crown-gold { filter: drop-shadow(0 0 4px #ffd700); }
-    .crown-silver { filter: drop-shadow(0 0 4px #ffffff) grayscale(0.8) contrast(1.2); }
-    .crown-bronze { filter: drop-shadow(0 0 4px #cd7f32) sepia(1) saturate(3) hue-rotate(-20deg); }
-
-    .crying-emoji {
-      font-size: 12px;
-      margin-left: 3px;
-      display: inline-block;
-      animation: shake 1.5s infinite ease-in-out;
-    }
-
-    @keyframes crownBounce {
-      0% { transform: translateY(0); }
-      100% { transform: translateY(-2px); }
-    }
-
-    @keyframes shake {
-      0%, 100% { transform: translateX(0); }
-      20%, 60% { transform: translateX(-2px); }
-      40%, 80% { transform: translateX(2px); }
-    }
+    .crown-icon { font-size: 11px; margin-right: 2px; }
+    .crying-emoji { font-size: 11px; margin-left: 2px; }
 
     .empty-msg {
       font-family: 'Noto Sans KR', sans-serif;
       font-size: 11px;
       color: #888;
       text-align: center;
-      padding: 16px 0;
+      padding: 14px 0;
     }
   </style>
 </head>
@@ -410,15 +361,15 @@
     </div>
 
     <div class="screen-wrapper">
-      <canvas id="gameCanvas" width="240" height="175"></canvas>
+      <canvas id="gameCanvas" width="240" height="180"></canvas>
       
       <div id="gameOverlay" class="overlay">
         <div class="creator-tag">X-SPACE 배솔찬이 만든</div>
         <h2 id="overlayTitle">BULLDOG GAME</h2>
         <p id="overlayDesc">
           ⚠️ 예민보스 불독의 뼈를 훔치세요!<br>
-          불독이 <b>Grrr.. 뒤척일 때</b> 건드리면 극대노합니다.<br>
-          게이지가 100% 차면 기상 후 사망!
+          불독이 <b>Grrr.. 뒤척일 때</b> 건드리면 극대노!<br>
+          분노 100%면 기상 후 물림!
         </p>
 
         <div class="name-input-box" id="nameBox">
@@ -485,17 +436,14 @@
     const ctx = canvas.getContext('2d');
     ctx.imageSmoothingEnabled = false;
 
-    // ★ iOS 사파리 대응 오디오 엔진
     const AudioContext = window.AudioContext || window.webkitAudioContext;
     let audioCtx = null;
 
-    function initAudioOnUserAction() {
-      if (!audioCtx) {
-        audioCtx = new AudioContext();
-      }
-      if (audioCtx.state === 'suspended') {
-        audioCtx.resume();
-      }
+    function unlockAudio() {
+      try {
+        if (!audioCtx) audioCtx = new AudioContext();
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+      } catch(e) {}
     }
 
     function playTone(freq, type, duration, vol = 0.12) {
@@ -513,18 +461,6 @@
         osc.start();
         osc.stop(audioCtx.currentTime + duration);
       } catch(e) {}
-    }
-
-    function soundSteal() {
-      playTone(650, 'sine', 0.07);
-      setTimeout(() => playTone(920, 'sine', 0.09), 50);
-    }
-    function soundGrowl() {
-      playTone(95, 'sawtooth', 0.35, 0.2);
-    }
-    function soundBite() {
-      playTone(70, 'square', 0.6, 0.3);
-      setTimeout(() => playTone(240, 'sawtooth', 0.4, 0.3), 120);
     }
 
     let score = 0;
@@ -555,27 +491,22 @@
       nicknameInput.value = localStorage.getItem('bulldog_nickname');
     }
 
-    // ★ 모바일/iOS 터치 이벤트 바인딩 (onmousedown 대신 touchstart/click 완벽 지원)
-    function handleStartTrigger(e) {
-      e.preventDefault();
-      initAudioOnUserAction();
+    // 아이폰 사파리 터치 안정화
+    startBtn.addEventListener('click', () => {
+      unlockAudio();
       startGame();
-    }
-    startBtn.addEventListener('click', handleStartTrigger);
-    startBtn.addEventListener('touchstart', handleStartTrigger, { passive: false });
+    });
 
-    function handleStealTrigger(e) {
+    stealBtn.addEventListener('pointerdown', (e) => {
       e.preventDefault();
-      initAudioOnUserAction();
+      unlockAudio();
       attemptSteal();
-    }
-    stealBtn.addEventListener('mousedown', handleStealTrigger);
-    stealBtn.addEventListener('touchstart', handleStealTrigger, { passive: false });
+    });
 
     window.addEventListener('keydown', (e) => {
       if (e.code === 'Space') {
         e.preventDefault();
-        initAudioOnUserAction();
+        unlockAudio();
         attemptSteal();
       }
     });
@@ -602,7 +533,9 @@
     function attemptSteal() {
       if (gameState !== 'PLAYING') return;
 
-      soundSteal();
+      playTone(650, 'sine', 0.07);
+      setTimeout(() => playTone(920, 'sine', 0.09), 50);
+
       handAnim = 8;
       score++;
       scoreVal.innerText = score;
@@ -650,7 +583,7 @@
           if (dogTimer <= 0) {
             dogState = 'STIRRING';
             stirDuration = 45 + Math.random() * 45;
-            soundGrowl();
+            playTone(95, 'sawtooth', 0.35, 0.2);
           }
         } else if (dogState === 'STIRRING') {
           stirDuration--;
@@ -671,7 +604,7 @@
       gameState = 'GAMEOVER';
       dogState = 'AWAKE';
       stealBtn.disabled = true;
-      soundBite();
+      playTone(70, 'square', 0.6, 0.3);
 
       const currentName = nicknameInput.value.trim() || '익명 도둑';
       saveScoreToFirebase(currentName, score);
@@ -679,7 +612,7 @@
       setTimeout(() => {
         overlay.style.display = 'flex';
         overlayTitle.innerText = "GAME OVER";
-        overlayDesc.innerHTML = `${msg}<br><br>훔친 뼈다귀: <b>${score}</b>개<br><span style="color:#66fcf1;font-size:10px;">온라인 랭킹에 기록되었습니다!</span>`;
+        overlayDesc.innerHTML = `${msg}<br><br>훔친 뼈다귀: <b>${score}</b>개<br><span style="color:#66fcf1;font-size:9px;">온라인 랭킹에 기록되었습니다!</span>`;
         startBtnText.innerText = "RETRY";
         nameBox.style.display = 'flex';
       }, 750);
@@ -743,13 +676,13 @@
 
           if (rank === 1) {
             topClass = 'top1';
-            crownTag = '<span class="crown-icon crown-gold">👑</span>';
+            crownTag = '<span class="crown-icon">👑</span>';
           } else if (rank === 2) {
             topClass = 'top2';
-            crownTag = '<span class="crown-icon crown-silver">👑</span>';
+            crownTag = '<span class="crown-icon">🥈</span>';
           } else if (rank === 3) {
             topClass = 'top3';
-            crownTag = '<span class="crown-icon crown-bronze">👑</span>';
+            crownTag = '<span class="crown-icon">🥉</span>';
           }
 
           if (rank >= 10) {
@@ -768,23 +701,20 @@
           rank++;
         });
         rankList.innerHTML = html;
-      }, (error) => {
-        console.error("순위표 수신 실패:", error);
-        rankList.innerHTML = `<div class="empty-msg" style="color:#ff5252;">순위표 연결 중... (잠시 후 다시 시도)</div>`;
       });
 
     function render() {
       ctx.fillStyle = '#161329';
-      ctx.fillRect(0, 0, 240, 175);
+      ctx.fillRect(0, 0, 240, 180);
 
       ctx.fillStyle = '#3d1c2e';
       ctx.beginPath();
-      ctx.ellipse(140, 125, 100, 42, 0, 0, Math.PI * 2);
+      ctx.ellipse(140, 130, 95, 40, 0, 0, Math.PI * 2);
       ctx.fill();
 
       ctx.fillStyle = '#7a2245';
       ctx.beginPath();
-      ctx.ellipse(150, 115, 75, 32, 0, 0, Math.PI * 2);
+      ctx.ellipse(150, 120, 72, 30, 0, 0, Math.PI * 2);
       ctx.fill();
 
       drawBigHeadBulldog();
@@ -799,12 +729,12 @@
         snoreFrame = (snoreFrame + 0.05) % 3;
         ctx.fillStyle = '#66fcf1';
         ctx.font = '10px monospace';
-        ctx.fillText('Z', 185, 45 - snoreFrame * 5);
-        ctx.fillText('z', 198, 33 - snoreFrame * 5);
+        ctx.fillText('Z', 185, 48 - snoreFrame * 5);
+        ctx.fillText('z', 198, 36 - snoreFrame * 5);
       } else if (dogState === 'STIRRING') {
         ctx.fillStyle = '#ffde59';
         ctx.font = '11px monospace';
-        ctx.fillText('GRRR..!!', 155, 35 + Math.sin(Date.now() / 70) * 3);
+        ctx.fillText('GRRR..!!', 155, 38 + Math.sin(Date.now() / 70) * 3);
       }
     }
 
@@ -825,102 +755,102 @@
 
       ctx.fillStyle = '#8b5a36';
       ctx.beginPath();
-      ctx.ellipse(180, 108, 35, 22, 0, 0, Math.PI * 2);
+      ctx.ellipse(180, 112, 35, 22, 0, 0, Math.PI * 2);
       ctx.fill();
       ctx.fillStyle = '#6f4422';
-      ctx.fillRect(195, 118, 14, 10);
+      ctx.fillRect(195, 122, 14, 10);
 
       ctx.fillStyle = '#d90429';
-      ctx.fillRect(150, 80, 12, 38);
+      ctx.fillRect(150, 84, 12, 38);
       ctx.fillStyle = '#edf2f4';
-      ctx.fillRect(154, 85, 5, 5);
-      ctx.fillRect(154, 98, 5, 5);
-      ctx.fillRect(154, 110, 5, 5);
+      ctx.fillRect(154, 89, 5, 5);
+      ctx.fillRect(154, 102, 5, 5);
+      ctx.fillRect(154, 114, 5, 5);
 
       ctx.fillStyle = '#a77048';
       ctx.beginPath();
-      ctx.ellipse(126, 85, 42, 36, 0, 0, Math.PI * 2);
+      ctx.ellipse(126, 89, 42, 36, 0, 0, Math.PI * 2);
       ctx.fill();
 
       ctx.fillStyle = '#5c381c';
       ctx.beginPath();
-      ctx.ellipse(140, 56, 12, 18, 0.4, 0, Math.PI * 2);
+      ctx.ellipse(140, 60, 12, 18, 0.4, 0, Math.PI * 2);
       ctx.fill();
       ctx.beginPath();
-      ctx.ellipse(98, 62, 10, 16, -0.3, 0, Math.PI * 2);
+      ctx.ellipse(98, 66, 10, 16, -0.3, 0, Math.PI * 2);
       ctx.fill();
 
       ctx.strokeStyle = '#6f4422';
       ctx.lineWidth = 3;
       ctx.beginPath();
-      ctx.arc(122, 64, 15, 0.5, Math.PI - 0.5);
-      ctx.arc(120, 70, 18, 0.5, Math.PI - 0.5);
+      ctx.arc(122, 68, 15, 0.5, Math.PI - 0.5);
+      ctx.arc(120, 74, 18, 0.5, Math.PI - 0.5);
       ctx.stroke();
 
       ctx.fillStyle = '#d4a373';
       ctx.beginPath();
-      ctx.ellipse(104, 96, 26, 20, 0, 0, Math.PI * 2);
+      ctx.ellipse(104, 100, 26, 20, 0, 0, Math.PI * 2);
       ctx.fill();
 
       ctx.fillStyle = '#111';
-      ctx.fillRect(88, 86, 14, 10);
+      ctx.fillRect(88, 90, 14, 10);
       ctx.fillStyle = '#444';
-      ctx.fillRect(90, 88, 3, 3);
+      ctx.fillRect(90, 92, 3, 3);
 
       if (dogState === 'SLEEPING') {
         ctx.strokeStyle = '#222';
         ctx.lineWidth = 3;
         ctx.beginPath();
-        ctx.arc(112, 76, 7, 0.2, Math.PI - 0.2);
+        ctx.arc(112, 80, 7, 0.2, Math.PI - 0.2);
         ctx.stroke();
 
         ctx.fillStyle = '#fff';
-        ctx.fillRect(86, 102, 4, 6);
+        ctx.fillRect(86, 106, 4, 6);
       } 
       else if (dogState === 'STIRRING') {
         ctx.strokeStyle = '#331100';
         ctx.lineWidth = 3;
         ctx.beginPath();
-        ctx.moveTo(102, 70);
-        ctx.lineTo(118, 77);
+        ctx.moveTo(102, 74);
+        ctx.lineTo(118, 81);
         ctx.stroke();
 
         ctx.fillStyle = '#ffde59';
-        ctx.fillRect(108, 73, 10, 4);
+        ctx.fillRect(108, 77, 10, 4);
         ctx.fillStyle = '#000';
-        ctx.fillRect(112, 73, 4, 4);
+        ctx.fillRect(112, 77, 4, 4);
 
         ctx.fillStyle = '#1a0000';
-        ctx.fillRect(86, 98, 18, 8);
+        ctx.fillRect(86, 102, 18, 8);
         ctx.fillStyle = '#fff';
-        ctx.fillRect(88, 101, 4, 5);
-        ctx.fillRect(96, 101, 4, 5);
+        ctx.fillRect(88, 105, 4, 5);
+        ctx.fillRect(96, 105, 4, 5);
       } 
       else {
         ctx.fillStyle = '#d90429';
         ctx.beginPath();
-        ctx.arc(112, 74, 11, 0, Math.PI * 2);
+        ctx.arc(112, 78, 11, 0, Math.PI * 2);
         ctx.fill();
         ctx.fillStyle = '#ffea00';
-        ctx.fillRect(108, 71, 4, 7);
+        ctx.fillRect(108, 75, 4, 7);
         ctx.fillStyle = '#fff';
-        ctx.fillRect(115, 68, 3, 3);
+        ctx.fillRect(115, 72, 3, 3);
 
         ctx.strokeStyle = '#d90429';
         ctx.lineWidth = 2;
         ctx.beginPath();
-        ctx.moveTo(132, 58); ctx.lineTo(138, 64);
-        ctx.moveTo(138, 58); ctx.lineTo(132, 64);
+        ctx.moveTo(132, 62); ctx.lineTo(138, 68);
+        ctx.moveTo(138, 62); ctx.lineTo(132, 68);
         ctx.stroke();
 
         ctx.fillStyle = '#4a0009';
-        ctx.fillRect(80, 94, 28, 16);
+        ctx.fillRect(80, 98, 28, 16);
         ctx.fillStyle = '#fff';
-        ctx.fillRect(82, 94, 5, 7);
-        ctx.fillRect(92, 94, 5, 6);
-        ctx.fillRect(101, 94, 5, 7);
-        ctx.fillRect(85, 103, 5, 7);
-        ctx.fillRect(97, 103, 5, 7);
+        ctx.fillRect(82, 98, 5, 7);
+        ctx.fillRect(92, 98, 5, 6);
+        ctx.fillRect(101, 98, 5, 7);
+        ctx.fillRect(85, 107, 5, 7);
+        ctx.fillRect(97, 107, 5, 7);
       }
 
       ctx.restore();
@@ -929,31 +859,31 @@
     function drawBoneBowl() {
       ctx.fillStyle = '#2b5876';
       ctx.beginPath();
-      ctx.ellipse(55, 130, 26, 11, 0, 0, Math.PI * 2);
+      ctx.ellipse(55, 134, 26, 11, 0, 0, Math.PI * 2);
       ctx.fill();
       ctx.fillStyle = '#1e3c50';
-      ctx.fillRect(32, 130, 46, 9);
+      ctx.fillRect(32, 134, 46, 9);
 
       ctx.fillStyle = '#f8f9fa';
-      ctx.fillRect(40, 125, 18, 5);
-      ctx.fillRect(38, 123, 5, 9);
-      ctx.fillRect(55, 123, 5, 9);
+      ctx.fillRect(40, 129, 18, 5);
+      ctx.fillRect(38, 127, 5, 9);
+      ctx.fillRect(55, 127, 5, 9);
 
-      ctx.fillRect(48, 119, 18, 5);
-      ctx.fillRect(46, 117, 5, 9);
-      ctx.fillRect(63, 117, 5, 9);
+      ctx.fillRect(48, 123, 18, 5);
+      ctx.fillRect(46, 121, 5, 9);
+      ctx.fillRect(63, 121, 5, 9);
     }
 
     function drawThiefHand() {
       ctx.save();
       ctx.fillStyle = '#111';
-      ctx.fillRect(10, 112, 35, 16);
-      ctx.fillRect(40, 116, 15, 8);
+      ctx.fillRect(10, 116, 35, 16);
+      ctx.fillRect(40, 120, 15, 8);
 
       ctx.fillStyle = '#f8f9fa';
-      ctx.fillRect(48, 114, 15, 4);
-      ctx.fillRect(46, 112, 4, 8);
-      ctx.fillRect(60, 112, 4, 8);
+      ctx.fillRect(48, 118, 15, 4);
+      ctx.fillRect(46, 116, 4, 8);
+      ctx.fillRect(60, 116, 4, 8);
       ctx.restore();
     }
 
