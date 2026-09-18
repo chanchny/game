@@ -1,0 +1,884 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DONT WAKE THE BULLDOG! - Retro 8-bit Online</title>
+  <!-- 8비트 레트로 폰트 및 한국어 폰트 -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Noto+Sans+KR:wght@700;900&display=swap" rel="stylesheet">
+  
+  <!-- Firebase SDK (v9 호환 모드) -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+    }
+
+    body {
+      background-color: #0b0c10;
+      font-family: 'Press Start 2P', monospace;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      min-height: 100vh;
+      padding: 20px 16px 40px;
+      overflow-x: hidden;
+    }
+
+    .game-cabinet {
+      position: relative;
+      background: #1f2833;
+      border: 8px solid #c5a059;
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 0 45px rgba(0, 0, 0, 0.95), inset 0 0 15px rgba(0, 0, 0, 0.8);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      max-width: 560px;
+    }
+
+    /* 상단 레트로 스코어보드 */
+    .hud {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 12px;
+      font-size: 13px;
+      color: #ffde59;
+      text-shadow: 2px 2px #000;
+    }
+
+    /* 캔버스 화면 래퍼 */
+    .screen-wrapper {
+      position: relative;
+      width: 480px;
+      height: 350px;
+      max-width: 100%;
+      border: 4px solid #45a29e;
+      border-radius: 8px;
+      overflow: hidden;
+      background: #111;
+      box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.9);
+    }
+
+    canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+      image-rendering: pixelated;
+      image-rendering: crisp-edges;
+    }
+
+    .screen-wrapper::after {
+      content: " ";
+      position: absolute;
+      top: 0; left: 0; bottom: 0; right: 0;
+      background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.35) 50%);
+      background-size: 100% 4px;
+      pointer-events: none;
+    }
+
+    /* 분노 게이지 바 */
+    .danger-meter-wrapper {
+      width: 100%;
+      margin-top: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .danger-label {
+      font-size: 11px;
+      color: #ff5252;
+      display: flex;
+      justify-content: space-between;
+      text-shadow: 1px 1px #000;
+    }
+
+    .meter-border {
+      width: 100%;
+      height: 22px;
+      background: #0b0c10;
+      border: 3px solid #66fcf1;
+      border-radius: 4px;
+      padding: 2px;
+    }
+
+    .meter-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #4caf50, #ffeb3b 50%, #ff1744 85%);
+      transition: width 0.05s linear;
+    }
+
+    /* 컨트롤 버튼 */
+    .controls {
+      margin-top: 18px;
+      display: flex;
+      gap: 16px;
+      width: 100%;
+    }
+
+    .steal-btn {
+      font-family: 'Press Start 2P', monospace;
+      border: none;
+      outline: none;
+      cursor: pointer;
+      padding: 16px 0;
+      flex: 1;
+      font-size: 14px;
+      color: #000;
+      background: #ffde59;
+      box-shadow: 0 6px 0 #b38b14, 0 8px 10px rgba(0,0,0,0.5);
+      border-radius: 6px;
+      transition: all 0.05s;
+    }
+
+    .steal-btn:active {
+      transform: translateY(4px);
+      box-shadow: 0 2px 0 #b38b14;
+    }
+
+    .steal-btn:disabled {
+      background: #555;
+      box-shadow: 0 4px 0 #333;
+      cursor: not-allowed;
+      color: #888;
+    }
+
+    /* 오버레이 */
+    .overlay {
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.90);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 20px;
+      z-index: 10;
+    }
+
+    .creator-tag {
+      font-family: 'Noto Sans KR', sans-serif;
+      font-size: 13px;
+      font-weight: 900;
+      color: #ffde59;
+      letter-spacing: 2px;
+      text-shadow: 0 0 8px rgba(255, 222, 89, 0.8), 2px 2px 0 #000;
+      margin-bottom: 6px;
+      animation: pulse 1.5s infinite alternate;
+    }
+
+    .overlay h2 {
+      font-size: 18px;
+      color: #ff3344;
+      margin-bottom: 10px;
+      line-height: 1.4;
+      animation: pulse 0.9s infinite alternate;
+    }
+
+    .overlay p {
+      font-size: 10px;
+      color: #c5a059;
+      line-height: 1.8;
+      margin-bottom: 16px;
+    }
+
+    .name-input-box {
+      margin-bottom: 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .name-input-box label {
+      font-family: 'Noto Sans KR', sans-serif;
+      font-size: 11px;
+      color: #66fcf1;
+    }
+
+    .nickname-input {
+      font-family: 'Noto Sans KR', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      padding: 8px 12px;
+      border: 2px solid #ffde59;
+      background: #111;
+      color: #fff;
+      border-radius: 6px;
+      text-align: center;
+      outline: none;
+      width: 180px;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      100% { transform: scale(1.05); }
+    }
+
+    /* 노란색 강아지 발바닥 START 버튼 */
+    .paw-start-btn {
+      position: relative;
+      background: none;
+      border: none;
+      outline: none;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 5px;
+      transition: transform 0.1s ease;
+    }
+
+    .paw-start-btn:hover {
+      transform: scale(1.08);
+    }
+
+    .paw-start-btn:active {
+      transform: scale(0.95);
+    }
+
+    .paw-start-btn svg {
+      width: 120px;
+      height: 100px;
+      filter: drop-shadow(0 6px 0 #b38b14) drop-shadow(0 10px 15px rgba(0,0,0,0.7));
+    }
+
+    .paw-text {
+      position: absolute;
+      bottom: 18px;
+      font-family: 'Press Start 2P', monospace;
+      font-size: 12px;
+      font-weight: 900;
+      color: #1a0f00;
+      letter-spacing: 1px;
+      pointer-events: none;
+      text-shadow: 1px 1px 0 rgba(255,255,255,0.4);
+    }
+
+    /* 실시간 온라인 랭킹 리더보드 */
+    .leaderboard-card {
+      width: 100%;
+      max-width: 560px;
+      margin-top: 24px;
+      background: #121820;
+      border: 4px solid #ffde59;
+      border-radius: 12px;
+      padding: 16px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.8);
+    }
+
+    .leaderboard-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      border-bottom: 2px dashed #45a29e;
+      padding-bottom: 8px;
+    }
+
+    .leaderboard-title {
+      font-size: 12px;
+      color: #ffde59;
+      letter-spacing: 1px;
+    }
+
+    .live-indicator {
+      font-family: 'Noto Sans KR', sans-serif;
+      font-size: 10px;
+      color: #4caf50;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .live-dot {
+      width: 8px;
+      height: 8px;
+      background: #4caf50;
+      border-radius: 50%;
+      animation: blink 1s infinite alternate;
+    }
+
+    @keyframes blink {
+      0% { opacity: 0.3; }
+      100% { opacity: 1; }
+    }
+
+    .rank-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .rank-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 12px;
+      background: #1f2833;
+      border-radius: 6px;
+      font-size: 10px;
+    }
+
+    .rank-item.top1 {
+      border: 2px solid #ffd700;
+      background: #2b2512;
+      color: #ffd700;
+    }
+    .rank-item.top2 {
+      border: 2px solid #c0c0c0;
+      background: #23272c;
+    }
+    .rank-item.top3 {
+      border: 2px solid #cd7f32;
+      background: #271f1a;
+    }
+
+    .rank-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: 'Noto Sans KR', sans-serif;
+      font-weight: 700;
+    }
+
+    .rank-num {
+      font-family: 'Press Start 2P', monospace;
+      font-size: 11px;
+      width: 24px;
+    }
+
+    .empty-msg {
+      font-family: 'Noto Sans KR', sans-serif;
+      font-size: 12px;
+      color: #888;
+      text-align: center;
+      padding: 20px 0;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="game-cabinet">
+    <!-- 점수 및 타이머 HUD -->
+    <div class="hud">
+      <div>BONES: <span id="scoreVal">0</span></div>
+      <div>TIME: <span id="timeVal">45</span>s</div>
+    </div>
+
+    <!-- 게임 화면 -->
+    <div class="screen-wrapper">
+      <canvas id="gameCanvas" width="240" height="175"></canvas>
+      
+      <!-- 오버레이 화면 -->
+      <div id="gameOverlay" class="overlay">
+        <div class="creator-tag">배솔찬이 만든</div>
+        <h2 id="overlayTitle">SLEEPING BULLDOG</h2>
+        <p id="overlayDesc">
+          ⚠️ 예민보스 불독의 뼈를 훔치세요!<br>
+          불독이 <b>Grrr.. 뒤척일 때</b> 건드리면 극대노합니다.<br>
+          게이지가 100% 차면 기상 후 사망!
+        </p>
+
+        <!-- 닉네임 입력 창 -->
+        <div class="name-input-box" id="nameBox">
+          <label>참가자 닉네임</label>
+          <input type="text" id="playerNickname" class="nickname-input" placeholder="닉네임 입력" maxlength="8" value="">
+        </div>
+        
+        <!-- 강아지 발바닥 START 버튼 -->
+        <button class="paw-start-btn" id="startBtn" onclick="startGame()">
+          <svg viewBox="0 0 100 85">
+            <ellipse cx="20" cy="22" rx="10" ry="14" fill="#ffde59" />
+            <ellipse cx="40" cy="14" rx="10" ry="14" fill="#ffde59" />
+            <ellipse cx="60" cy="14" rx="10" ry="14" fill="#ffde59" />
+            <ellipse cx="80" cy="22" rx="10" ry="14" fill="#ffde59" />
+            <path d="M22,46 C22,34 36,32 50,32 C64,32 78,34 78,46 C78,64 68,78 50,78 C32,78 22,64 22,46 Z" fill="#ffde59" />
+          </svg>
+          <span class="paw-text" id="startBtnText">START</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- 분노 게이지 -->
+    <div class="danger-meter-wrapper">
+      <div class="danger-label">
+        <span>BULLDOG ANGER</span>
+        <span id="meterText">0%</span>
+      </div>
+      <div class="meter-border">
+        <div class="meter-fill" id="meterFill"></div>
+      </div>
+    </div>
+
+    <!-- 컨트롤 버튼 -->
+    <div class="controls">
+      <button class="steal-btn" id="stealBtn" onmousedown="attemptSteal()" disabled>🦴 STEAL! (SPACE)</button>
+    </div>
+  </div>
+
+  <!-- 실시간 온라인 랭킹 리더보드 -->
+  <div class="leaderboard-card">
+    <div class="leaderboard-header">
+      <div class="leaderboard-title">🏆 LIVE LEADERBOARD (TOP 10)</div>
+      <div class="live-indicator">
+        <div class="live-dot"></div>
+        <span>실시간 연동 중</span>
+      </div>
+    </div>
+    <div class="rank-list" id="rankList">
+      <div class="empty-msg">데이터베이스 불러오는 중...</div>
+    </div>
+  </div>
+
+  <script>
+    // ★★★ 유저분의 Firebase 프로젝트 설정값 연결 완료 ★★★
+    const firebaseConfig = {
+      apiKey: "AIzaSyBF20RxT7I3n9LD0EjDy_NDamW5V22p_7g",
+      authDomain: "project-2017346322365333590.firebaseapp.com",
+      projectId: "project-2017346322365333590",
+      storageBucket: "project-2017346322365333590.firebasestorage.app",
+      messagingSenderId: "918451681128",
+      appId: "1:918451681128:web:55499be185113afa08c8dd",
+      measurementId: "G-17GZKF04BJ"
+    };
+
+    // Firebase 초기화
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    // 캔버스 설정
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+    ctx.imageSmoothingEnabled = false;
+
+    // 사운드
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    let audioCtx;
+
+    function playTone(freq, type, duration, vol = 0.12) {
+      try {
+        if (!audioCtx) audioCtx = new AudioContext();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+        gain.gain.setValueAtTime(vol, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + duration);
+      } catch(e) {}
+    }
+
+    function soundSteal() {
+      playTone(650, 'sine', 0.07);
+      setTimeout(() => playTone(920, 'sine', 0.09), 50);
+    }
+    function soundGrowl() {
+      playTone(95, 'sawtooth', 0.35, 0.2);
+    }
+    function soundBite() {
+      playTone(70, 'square', 0.6, 0.3);
+      setTimeout(() => playTone(240, 'sawtooth', 0.4, 0.3), 120);
+    }
+
+    // 게임 변수
+    let score = 0;
+    let timeLeft = 45;
+    let anger = 0;
+    let gameState = 'STOPPED';
+    let dogState = 'SLEEPING';
+    let dogTimer = 0;
+    let stirDuration = 0;
+    let handAnim = 0;
+    let snoreFrame = 0;
+
+    // 캐시
+    const scoreVal = document.getElementById('scoreVal');
+    const timeVal = document.getElementById('timeVal');
+    const meterFill = document.getElementById('meterFill');
+    const meterText = document.getElementById('meterText');
+    const stealBtn = document.getElementById('stealBtn');
+    const overlay = document.getElementById('gameOverlay');
+    const overlayTitle = document.getElementById('overlayTitle');
+    const overlayDesc = document.getElementById('overlayDesc');
+    const startBtnText = document.getElementById('startBtnText');
+    const nicknameInput = document.getElementById('playerNickname');
+    const nameBox = document.getElementById('nameBox');
+    const rankList = document.getElementById('rankList');
+
+    // 이전 닉네임 불러오기
+    if (localStorage.getItem('bulldog_nickname')) {
+      nicknameInput.value = localStorage.getItem('bulldog_nickname');
+    }
+
+    window.addEventListener('keydown', (e) => {
+      if (e.code === 'Space') {
+        e.preventDefault();
+        attemptSteal();
+      }
+    });
+
+    function startGame() {
+      const name = nicknameInput.value.trim() || '익명 도둑';
+      localStorage.setItem('bulldog_nickname', name);
+
+      if (!audioCtx) audioCtx = new AudioContext();
+      score = 0;
+      timeLeft = 45;
+      anger = 0;
+      dogState = 'SLEEPING';
+      dogTimer = 60 + Math.random() * 60;
+      gameState = 'PLAYING';
+
+      scoreVal.innerText = score;
+      timeVal.innerText = timeLeft;
+      meterFill.style.width = '0%';
+      meterText.innerText = '0%';
+      overlay.style.display = 'none';
+      stealBtn.disabled = false;
+    }
+
+    function attemptSteal() {
+      if (gameState !== 'PLAYING') return;
+
+      soundSteal();
+      handAnim = 8;
+      score++;
+      scoreVal.innerText = score;
+
+      if (dogState === 'STIRRING') {
+        anger += 45;
+        playTone(210, 'sawtooth', 0.2, 0.25);
+      } else {
+        anger += 16 + Math.random() * 6;
+      }
+
+      if (anger >= 100) {
+        anger = 100;
+        triggerGameOver("ANGRY BULLDOG BITE!!");
+      }
+    }
+
+    let lastTime = Date.now();
+    let secondCounter = 0;
+
+    function loop() {
+      requestAnimationFrame(loop);
+      const now = Date.now();
+      const dt = (now - lastTime) / 1000;
+      lastTime = now;
+
+      if (gameState === 'PLAYING') {
+        secondCounter += dt;
+        if (secondCounter >= 1) {
+          secondCounter = 0;
+          timeLeft--;
+          timeVal.innerText = timeLeft;
+          if (timeLeft <= 0) {
+            triggerGameOver(`CLEAR! MISSION SUCCESS! 🦴 x${score}`);
+          }
+        }
+
+        if (anger > 0) {
+          anger -= 14 * dt;
+          if (anger < 0) anger = 0;
+        }
+
+        dogTimer--;
+        if (dogState === 'SLEEPING') {
+          if (dogTimer <= 0) {
+            dogState = 'STIRRING';
+            stirDuration = 45 + Math.random() * 45;
+            soundGrowl();
+          }
+        } else if (dogState === 'STIRRING') {
+          stirDuration--;
+          if (stirDuration <= 0) {
+            dogState = 'SLEEPING';
+            dogTimer = 55 + Math.random() * 70;
+          }
+        }
+
+        meterFill.style.width = `${anger}%`;
+        meterText.innerText = `${Math.floor(anger)}%`;
+      }
+
+      render();
+    }
+
+    function triggerGameOver(msg) {
+      gameState = 'GAMEOVER';
+      dogState = 'AWAKE';
+      stealBtn.disabled = true;
+      soundBite();
+
+      // 온라인 DB에 점수 저장
+      const currentName = nicknameInput.value.trim() || '익명 도둑';
+      saveScoreToFirebase(currentName, score);
+
+      setTimeout(() => {
+        overlay.style.display = 'flex';
+        overlayTitle.innerText = "GAME OVER";
+        overlayDesc.innerHTML = `${msg}<br><br>훔친 뼈다귀: <b>${score}</b>개<br><span style="color:#66fcf1;font-size:10px;">온라인 랭킹에 기록되었습니다!</span>`;
+        startBtnText.innerText = "RETRY";
+        nameBox.style.display = 'flex';
+      }, 750);
+    }
+
+    // ★ Firestore 실시간 점수 등록
+    function saveScoreToFirebase(name, finalScore) {
+      if (finalScore <= 0) return;
+      db.collection('scores').add({
+        name: name,
+        score: finalScore,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      }).catch(err => {
+        console.error("점수 저장 실패:", err);
+      });
+    }
+
+    // ★ Firestore 실시간 리더보드 수신 (onSnapshot)
+    db.collection('scores')
+      .orderBy('score', 'desc')
+      .limit(10)
+      .onSnapshot((snapshot) => {
+        if (snapshot.empty) {
+          rankList.innerHTML = `<div class="empty-msg">아직 기록이 없습니다. 첫 챔피언이 되어보세요!</div>`;
+          return;
+        }
+
+        let html = '';
+        let rank = 1;
+        snapshot.forEach((doc) => {
+          const data = doc.data();
+          let topClass = '';
+          if (rank === 1) topClass = 'top1';
+          else if (rank === 2) topClass = 'top2';
+          else if (rank === 3) topClass = 'top3';
+
+          html += `
+            <div class="rank-item ${topClass}">
+              <div class="rank-info">
+                <span class="rank-num">#${rank}</span>
+                <span>${data.name}</span>
+              </div>
+              <div style="font-family:'Press Start 2P', monospace; color:#ffde59;">${data.score} 🦴</div>
+            </div>
+          `;
+          rank++;
+        });
+        rankList.innerHTML = html;
+      }, (error) => {
+        console.error("순위표 수신 실패:", error);
+        rankList.innerHTML = `<div class="empty-msg" style="color:#ff5252;">순위표 연결 중... (잠시 후 다시 시도)</div>`;
+      });
+
+    // 캔버스 그래픽 렌더러
+    function render() {
+      ctx.fillStyle = '#161329';
+      ctx.fillRect(0, 0, 240, 175);
+
+      // 카펫 & 쿠션
+      ctx.fillStyle = '#3d1c2e';
+      ctx.beginPath();
+      ctx.ellipse(140, 125, 100, 42, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = '#7a2245';
+      ctx.beginPath();
+      ctx.ellipse(150, 115, 75, 32, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      drawBigHeadBulldog();
+      drawBoneBowl();
+
+      if (handAnim > 0) {
+        drawThiefHand();
+        handAnim--;
+      }
+
+      if (dogState === 'SLEEPING' && gameState === 'PLAYING') {
+        snoreFrame = (snoreFrame + 0.05) % 3;
+        ctx.fillStyle = '#66fcf1';
+        ctx.font = '10px monospace';
+        ctx.fillText('Z', 185, 45 - snoreFrame * 5);
+        ctx.fillText('z', 198, 33 - snoreFrame * 5);
+      } else if (dogState === 'STIRRING') {
+        ctx.fillStyle = '#ffde59';
+        ctx.font = '11px monospace';
+        ctx.fillText('GRRR..!!', 155, 35 + Math.sin(Date.now() / 70) * 3);
+      }
+    }
+
+    function drawBigHeadBulldog() {
+      ctx.save();
+      let shakeX = 0;
+      let shakeY = 0;
+
+      if (dogState === 'STIRRING') {
+        shakeX = (Math.random() - 0.5) * 4;
+        shakeY = (Math.random() - 0.5) * 3;
+      } else if (dogState === 'AWAKE') {
+        shakeX = (Math.random() - 0.5) * 7;
+        shakeY = (Math.random() - 0.5) * 5;
+      }
+
+      ctx.translate(shakeX, shakeY);
+
+      ctx.fillStyle = '#8b5a36';
+      ctx.beginPath();
+      ctx.ellipse(180, 108, 35, 22, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = '#6f4422';
+      ctx.fillRect(195, 118, 14, 10);
+
+      ctx.fillStyle = '#d90429';
+      ctx.fillRect(150, 80, 12, 38);
+      ctx.fillStyle = '#edf2f4';
+      ctx.fillRect(154, 85, 5, 5);
+      ctx.fillRect(154, 98, 5, 5);
+      ctx.fillRect(154, 110, 5, 5);
+
+      ctx.fillStyle = '#a77048';
+      ctx.beginPath();
+      ctx.ellipse(126, 85, 42, 36, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = '#5c381c';
+      ctx.beginPath();
+      ctx.ellipse(140, 56, 12, 18, 0.4, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.beginPath();
+      ctx.ellipse(98, 62, 10, 16, -0.3, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.strokeStyle = '#6f4422';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.arc(122, 64, 15, 0.5, Math.PI - 0.5);
+      ctx.arc(120, 70, 18, 0.5, Math.PI - 0.5);
+      ctx.stroke();
+
+      ctx.fillStyle = '#d4a373';
+      ctx.beginPath();
+      ctx.ellipse(104, 96, 26, 20, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = '#111';
+      ctx.fillRect(88, 86, 14, 10);
+      ctx.fillStyle = '#444';
+      ctx.fillRect(90, 88, 3, 3);
+
+      if (dogState === 'SLEEPING') {
+        ctx.strokeStyle = '#222';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.arc(112, 76, 7, 0.2, Math.PI - 0.2);
+        ctx.stroke();
+
+        ctx.fillStyle = '#fff';
+        ctx.fillRect(86, 102, 4, 6);
+      } 
+      else if (dogState === 'STIRRING') {
+        ctx.strokeStyle = '#331100';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.moveTo(102, 70);
+        ctx.lineTo(118, 77);
+        ctx.stroke();
+
+        ctx.fillStyle = '#ffde59';
+        ctx.fillRect(108, 73, 10, 4);
+        ctx.fillStyle = '#000';
+        ctx.fillRect(112, 73, 4, 4);
+
+        ctx.fillStyle = '#1a0000';
+        ctx.fillRect(86, 98, 18, 8);
+        ctx.fillStyle = '#fff';
+        ctx.fillRect(88, 101, 4, 5);
+        ctx.fillRect(96, 101, 4, 5);
+      } 
+      else {
+        ctx.fillStyle = '#d90429';
+        ctx.beginPath();
+        ctx.arc(112, 74, 11, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = '#ffea00';
+        ctx.fillRect(108, 71, 4, 7);
+        ctx.fillStyle = '#fff';
+        ctx.fillRect(115, 68, 3, 3);
+
+        ctx.strokeStyle = '#d90429';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(132, 58); ctx.lineTo(138, 64);
+        ctx.moveTo(138, 58); ctx.lineTo(132, 64);
+        ctx.stroke();
+
+        ctx.fillStyle = '#4a0009';
+        ctx.fillRect(80, 94, 28, 16);
+        ctx.fillStyle = '#fff';
+        ctx.fillRect(82, 94, 5, 7);
+        ctx.fillRect(92, 94, 5, 6);
+        ctx.fillRect(101, 94, 5, 7);
+        ctx.fillRect(85, 103, 5, 7);
+        ctx.fillRect(97, 103, 5, 7);
+      }
+
+      ctx.restore();
+    }
+
+    function drawBoneBowl() {
+      ctx.fillStyle = '#2b5876';
+      ctx.beginPath();
+      ctx.ellipse(55, 130, 26, 11, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = '#1e3c50';
+      ctx.fillRect(32, 130, 46, 9);
+
+      ctx.fillStyle = '#f8f9fa';
+      ctx.fillRect(40, 125, 18, 5);
+      ctx.fillRect(38, 123, 5, 9);
+      ctx.fillRect(55, 123, 5, 9);
+
+      ctx.fillRect(48, 119, 18, 5);
+      ctx.fillRect(46, 117, 5, 9);
+      ctx.fillRect(63, 117, 5, 9);
+    }
+
+    function drawThiefHand() {
+      ctx.save();
+      ctx.fillStyle = '#111';
+      ctx.fillRect(10, 112, 35, 16);
+      ctx.fillRect(40, 116, 15, 8);
+
+      ctx.fillStyle = '#f8f9fa';
+      ctx.fillRect(48, 114, 15, 4);
+      ctx.fillRect(46, 112, 4, 8);
+      ctx.fillRect(60, 112, 4, 8);
+      ctx.restore();
+    }
+
+    requestAnimationFrame(loop);
+  </script>
+</body>
+</html>
