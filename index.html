@@ -33,7 +33,7 @@
       align-items: center;
       justify-content: flex-start;
       min-height: 100vh;
-      padding: 12px 10px 30px;
+      padding: 12px 10px 40px;
       overflow-x: hidden;
     }
 
@@ -154,7 +154,6 @@
       color: #777 !important;
     }
 
-    /* 오버레이 창 최적화 */
     .overlay {
       position: absolute;
       top: 0; left: 0; width: 100%; height: 100%;
@@ -217,7 +216,6 @@
       -webkit-appearance: none;
     }
 
-    /* 발바닥 버튼 크기 및 터치 영역 확실하게 고정 */
     .paw-start-btn {
       position: relative;
       background: none;
@@ -350,6 +348,109 @@
       text-align: center;
       padding: 14px 0;
     }
+
+    /* ★ 추가: 실시간 한줄평 방명록 스타일 ★ */
+    .guestbook-card {
+      width: 100%;
+      max-width: 460px;
+      margin-top: 16px;
+      background: #121820;
+      border: 3px solid #66fcf1;
+      border-radius: 12px;
+      padding: 12px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+    }
+
+    .guestbook-form {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 12px;
+    }
+
+    .comment-input {
+      flex: 1;
+      font-family: 'Noto Sans KR', sans-serif;
+      font-size: 12px;
+      padding: 8px 10px;
+      background: #1a222d;
+      border: 2px solid #45a29e;
+      border-radius: 6px;
+      color: #fff;
+      outline: none;
+      user-select: text !important;
+      -webkit-user-select: text !important;
+    }
+    .comment-input:focus {
+      border-color: #66fcf1;
+    }
+
+    .comment-btn {
+      font-family: 'Noto Sans KR', sans-serif;
+      font-weight: 900;
+      font-size: 12px;
+      background: #66fcf1;
+      color: #0b0c10;
+      border: none;
+      border-radius: 6px;
+      padding: 0 14px;
+      cursor: pointer;
+      box-shadow: 0 3px 0 #288e89;
+      -webkit-appearance: none;
+    }
+    .comment-btn:active {
+      transform: translateY(2px);
+      box-shadow: 0 1px 0 #288e89;
+    }
+
+    .comment-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      max-height: 220px;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+
+    .comment-list::-webkit-scrollbar {
+      width: 4px;
+    }
+    .comment-list::-webkit-scrollbar-thumb {
+      background: #45a29e;
+      border-radius: 4px;
+    }
+
+    .comment-item {
+      background: #1a222d;
+      border-radius: 6px;
+      padding: 8px 10px;
+      font-family: 'Noto Sans KR', sans-serif;
+      font-size: 11px;
+      border-left: 3px solid #ffde59;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .comment-header {
+      display: flex;
+      justify-content: space-between;
+      color: #ffde59;
+      font-weight: 900;
+      font-size: 11px;
+    }
+
+    .comment-time {
+      font-size: 9px;
+      color: #888;
+      font-weight: 400;
+      font-family: monospace;
+    }
+
+    .comment-text {
+      color: #e0e0e0;
+      word-break: break-word;
+      line-height: 1.4;
+    }
   </style>
 </head>
 <body>
@@ -405,6 +506,7 @@
     </div>
   </div>
 
+  <!-- 실시간 온라인 랭킹 리더보드 (TOP 15) -->
   <div class="leaderboard-card">
     <div class="leaderboard-header">
       <div class="leaderboard-title">🏆 LIVE LEADERBOARD (TOP 15)</div>
@@ -415,6 +517,20 @@
     </div>
     <div class="rank-list" id="rankList">
       <div class="empty-msg">데이터베이스 불러오는 중...</div>
+    </div>
+  </div>
+
+  <!-- ★ 실시간 한줄평 방명록 카드 ★ -->
+  <div class="guestbook-card">
+    <div class="leaderboard-header" style="border-bottom-color: #66fcf1;">
+      <div class="leaderboard-title" style="color: #66fcf1;">💬 실시간 한줄평 (도발 & 후기)</div>
+    </div>
+    <div class="guestbook-form">
+      <input type="text" id="commentInput" class="comment-input" placeholder="한줄평을 남겨보세요! (최대 30자)" maxlength="30">
+      <button class="comment-btn" onclick="submitComment()">등록</button>
+    </div>
+    <div class="comment-list" id="commentList">
+      <div class="empty-msg">첫 한줄평을 남겨보세요!</div>
     </div>
   </div>
 
@@ -491,7 +607,6 @@
       nicknameInput.value = localStorage.getItem('bulldog_nickname');
     }
 
-    // 아이폰 사파리 터치 안정화
     startBtn.addEventListener('click', () => {
       unlockAudio();
       startGame();
@@ -505,6 +620,8 @@
 
     window.addEventListener('keydown', (e) => {
       if (e.code === 'Space') {
+        if (document.activeElement === document.getElementById('commentInput') || 
+            document.activeElement === nicknameInput) return;
         e.preventDefault();
         unlockAudio();
         attemptSteal();
@@ -644,6 +761,7 @@
       });
     }
 
+    // 랭킹 수신
     db.collection('scores')
       .orderBy('score', 'desc')
       .onSnapshot((snapshot) => {
@@ -701,6 +819,63 @@
           rank++;
         });
         rankList.innerHTML = html;
+      });
+
+    // ★ 실시간 한줄평 방명록 로직 ★
+    function submitComment() {
+      const commentInput = document.getElementById('commentInput');
+      const text = commentInput.value.trim();
+      const name = nicknameInput.value.trim() || '익명 도둑';
+
+      if (!text) return;
+
+      db.collection('comments').add({
+        name: name,
+        text: text,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      }).then(() => {
+        commentInput.value = '';
+      }).catch(err => {
+        console.error("댓글 등록 실패:", err);
+      });
+    }
+
+    document.getElementById('commentInput').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        submitComment();
+      }
+    });
+
+    db.collection('comments')
+      .orderBy('createdAt', 'desc')
+      .limit(30)
+      .onSnapshot((snapshot) => {
+        const commentList = document.getElementById('commentList');
+        if (snapshot.empty) {
+          commentList.innerHTML = `<div class="empty-msg">첫 한줄평을 남겨보세요!</div>`;
+          return;
+        }
+
+        let html = '';
+        snapshot.forEach((doc) => {
+          const data = doc.data();
+          let timeStr = '방금';
+          if (data.createdAt && data.createdAt.toDate) {
+            const d = data.createdAt.toDate();
+            timeStr = `${(d.getMonth()+1)}/${d.getDate()} ${d.getHours().toString().padStart(2,'0')}:${d.getMinutes().toString().padStart(2,'0')}`;
+          }
+
+          html += `
+            <div class="comment-item">
+              <div class="comment-header">
+                <span>${data.name}</span>
+                <span class="comment-time">${timeStr}</span>
+              </div>
+              <div class="comment-text">${data.text}</div>
+            </div>
+          `;
+        });
+        commentList.innerHTML = html;
       });
 
     function render() {
