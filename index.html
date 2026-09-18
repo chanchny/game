@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>BULLDOG GAME - Retro 8-bit Online</title>
   <!-- 8비트 레트로 폰트 및 한국어 폰트 -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -19,6 +19,9 @@
       margin: 0;
       padding: 0;
       user-select: none;
+      -webkit-user-select: none;
+      -webkit-touch-callout: none;
+      touch-action: manipulation;
     }
 
     body {
@@ -30,41 +33,39 @@
       align-items: center;
       justify-content: flex-start;
       min-height: 100vh;
-      padding: 20px 16px 40px;
+      padding: 16px 12px 40px;
       overflow-x: hidden;
     }
 
     .game-cabinet {
       position: relative;
       background: #1f2833;
-      border: 8px solid #c5a059;
+      border: 6px solid #c5a059;
       border-radius: 16px;
-      padding: 20px;
+      padding: 16px;
       box-shadow: 0 0 45px rgba(0, 0, 0, 0.95), inset 0 0 15px rgba(0, 0, 0, 0.8);
       display: flex;
       flex-direction: column;
       align-items: center;
       width: 100%;
-      max-width: 560px;
+      max-width: 500px;
     }
 
-    /* 상단 레트로 스코어보드 */
     .hud {
       width: 100%;
       display: flex;
       justify-content: space-between;
       margin-bottom: 12px;
-      font-size: 13px;
+      font-size: 12px;
       color: #ffde59;
       text-shadow: 2px 2px #000;
     }
 
-    /* 캔버스 화면 래퍼 */
     .screen-wrapper {
       position: relative;
-      width: 480px;
-      height: 350px;
-      max-width: 100%;
+      width: 100%;
+      aspect-ratio: 240 / 175;
+      max-height: 330px;
       border: 4px solid #45a29e;
       border-radius: 8px;
       overflow: hidden;
@@ -89,7 +90,6 @@
       pointer-events: none;
     }
 
-    /* 분노 게이지 바 */
     .danger-meter-wrapper {
       width: 100%;
       margin-top: 14px;
@@ -122,9 +122,8 @@
       transition: width 0.05s linear;
     }
 
-    /* 컨트롤 버튼 */
     .controls {
-      margin-top: 18px;
+      margin-top: 16px;
       display: flex;
       gap: 16px;
       width: 100%;
@@ -143,6 +142,7 @@
       box-shadow: 0 6px 0 #b38b14, 0 8px 10px rgba(0,0,0,0.5);
       border-radius: 6px;
       transition: all 0.05s;
+      -webkit-appearance: none;
     }
 
     .steal-btn:active {
@@ -157,54 +157,52 @@
       color: #888;
     }
 
-    /* 오버레이 */
     .overlay {
       position: absolute;
       top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(0, 0, 0, 0.90);
+      background: rgba(0, 0, 0, 0.92);
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       text-align: center;
-      padding: 20px;
+      padding: 14px;
       z-index: 10;
     }
 
-    /* ★★★ [수정]: X-SPACE 배솔찬이 만든 크레딧 태그 ★★★ */
     .creator-tag {
       font-family: 'Noto Sans KR', sans-serif;
-      font-size: 13px;
+      font-size: 12px;
       font-weight: 900;
       color: #ffde59;
-      letter-spacing: 2px;
+      letter-spacing: 1.5px;
       text-shadow: 0 0 8px rgba(255, 222, 89, 0.8), 2px 2px 0 #000;
-      margin-bottom: 8px;
+      margin-bottom: 6px;
       animation: pulse 1.5s infinite alternate;
     }
 
     .overlay h2 {
-      font-size: 20px;
+      font-size: 18px;
       color: #ff3344;
-      margin-bottom: 12px;
-      line-height: 1.4;
+      margin-bottom: 8px;
+      line-height: 1.3;
       letter-spacing: 1px;
       animation: pulse 0.9s infinite alternate;
     }
 
     .overlay p {
-      font-size: 10px;
+      font-size: 9px;
       color: #c5a059;
-      line-height: 1.8;
-      margin-bottom: 16px;
+      line-height: 1.6;
+      margin-bottom: 12px;
     }
 
     .name-input-box {
-      margin-bottom: 16px;
+      margin-bottom: 12px;
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 6px;
+      gap: 4px;
     }
 
     .name-input-box label {
@@ -217,14 +215,15 @@
       font-family: 'Noto Sans KR', sans-serif;
       font-size: 14px;
       font-weight: 700;
-      padding: 8px 12px;
+      padding: 6px 12px;
       border: 2px solid #ffde59;
       background: #111;
       color: #fff;
       border-radius: 6px;
       text-align: center;
       outline: none;
-      width: 180px;
+      width: 160px;
+      -webkit-appearance: none;
     }
 
     @keyframes pulse {
@@ -232,7 +231,6 @@
       100% { transform: scale(1.05); }
     }
 
-    /* 노란색 강아지 발바닥 START 버튼 */
     .paw-start-btn {
       position: relative;
       background: none;
@@ -243,12 +241,9 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 5px;
+      padding: 4px;
       transition: transform 0.1s ease;
-    }
-
-    .paw-start-btn:hover {
-      transform: scale(1.08);
+      -webkit-appearance: none;
     }
 
     .paw-start-btn:active {
@@ -256,16 +251,16 @@
     }
 
     .paw-start-btn svg {
-      width: 120px;
-      height: 100px;
-      filter: drop-shadow(0 6px 0 #b38b14) drop-shadow(0 10px 15px rgba(0,0,0,0.7));
+      width: 110px;
+      height: 90px;
+      filter: drop-shadow(0 5px 0 #b38b14) drop-shadow(0 8px 12px rgba(0,0,0,0.7));
     }
 
     .paw-text {
       position: absolute;
-      bottom: 18px;
+      bottom: 16px;
       font-family: 'Press Start 2P', monospace;
-      font-size: 12px;
+      font-size: 11px;
       font-weight: 900;
       color: #1a0f00;
       letter-spacing: 1px;
@@ -273,15 +268,14 @@
       text-shadow: 1px 1px 0 rgba(255,255,255,0.4);
     }
 
-    /* 실시간 온라인 랭킹 리더보드 (TOP 15) */
     .leaderboard-card {
       width: 100%;
-      max-width: 560px;
-      margin-top: 24px;
+      max-width: 500px;
+      margin-top: 20px;
       background: #121820;
       border: 4px solid #ffde59;
       border-radius: 12px;
-      padding: 16px;
+      padding: 14px;
       box-shadow: 0 8px 24px rgba(0,0,0,0.8);
     }
 
@@ -295,7 +289,7 @@
     }
 
     .leaderboard-title {
-      font-size: 12px;
+      font-size: 11px;
       color: #ffde59;
       letter-spacing: 1px;
     }
@@ -332,10 +326,10 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 8px 12px;
+      padding: 8px 10px;
       background: #1f2833;
       border-radius: 6px;
-      font-size: 10px;
+      font-size: 9px;
     }
 
     .rank-item.top1 {
@@ -358,19 +352,19 @@
     .rank-info {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 6px;
       font-family: 'Noto Sans KR', sans-serif;
       font-weight: 700;
     }
 
     .rank-num {
       font-family: 'Press Start 2P', monospace;
-      font-size: 10px;
-      width: 32px;
+      font-size: 9px;
+      width: 28px;
     }
 
     .crown-icon {
-      font-size: 13px;
+      font-size: 12px;
       margin-right: 2px;
       display: inline-block;
       animation: crownBounce 1s infinite alternate ease-in-out;
@@ -381,8 +375,8 @@
     .crown-bronze { filter: drop-shadow(0 0 4px #cd7f32) sepia(1) saturate(3) hue-rotate(-20deg); }
 
     .crying-emoji {
-      font-size: 13px;
-      margin-left: 4px;
+      font-size: 12px;
+      margin-left: 3px;
       display: inline-block;
       animation: shake 1.5s infinite ease-in-out;
     }
@@ -400,29 +394,25 @@
 
     .empty-msg {
       font-family: 'Noto Sans KR', sans-serif;
-      font-size: 12px;
+      font-size: 11px;
       color: #888;
       text-align: center;
-      padding: 20px 0;
+      padding: 16px 0;
     }
   </style>
 </head>
 <body>
 
   <div class="game-cabinet">
-    <!-- 점수 및 타이머 HUD -->
     <div class="hud">
       <div>BONES: <span id="scoreVal">0</span></div>
       <div>TIME: <span id="timeVal">45</span>s</div>
     </div>
 
-    <!-- 게임 화면 -->
     <div class="screen-wrapper">
       <canvas id="gameCanvas" width="240" height="175"></canvas>
       
-      <!-- 오버레이 화면 -->
       <div id="gameOverlay" class="overlay">
-        <!-- ★ 수정된 타이틀 섹션 ★ -->
         <div class="creator-tag">X-SPACE 배솔찬이 만든</div>
         <h2 id="overlayTitle">BULLDOG GAME</h2>
         <p id="overlayDesc">
@@ -431,14 +421,12 @@
           게이지가 100% 차면 기상 후 사망!
         </p>
 
-        <!-- 닉네임 입력 창 -->
         <div class="name-input-box" id="nameBox">
           <label>참가자 닉네임</label>
           <input type="text" id="playerNickname" class="nickname-input" placeholder="닉네임 입력" maxlength="8" value="">
         </div>
         
-        <!-- 강아지 발바닥 START 버튼 -->
-        <button class="paw-start-btn" id="startBtn" onclick="startGame()">
+        <button class="paw-start-btn" id="startBtn">
           <svg viewBox="0 0 100 85">
             <ellipse cx="20" cy="22" rx="10" ry="14" fill="#ffde59" />
             <ellipse cx="40" cy="14" rx="10" ry="14" fill="#ffde59" />
@@ -451,7 +439,6 @@
       </div>
     </div>
 
-    <!-- 분노 게이지 -->
     <div class="danger-meter-wrapper">
       <div class="danger-label">
         <span>BULLDOG ANGER</span>
@@ -462,13 +449,11 @@
       </div>
     </div>
 
-    <!-- 컨트롤 버튼 -->
     <div class="controls">
-      <button class="steal-btn" id="stealBtn" onmousedown="attemptSteal()" disabled>🦴 STEAL! (SPACE)</button>
+      <button class="steal-btn" id="stealBtn" disabled>🦴 STEAL! (TAP)</button>
     </div>
   </div>
 
-  <!-- 실시간 온라인 랭킹 리더보드 (TOP 15) -->
   <div class="leaderboard-card">
     <div class="leaderboard-header">
       <div class="leaderboard-title">🏆 LIVE LEADERBOARD (TOP 15)</div>
@@ -483,7 +468,6 @@
   </div>
 
   <script>
-    // Firebase 프로젝트 설정값
     const firebaseConfig = {
       apiKey: "AIzaSyBF20RxT7I3n9LD0EjDy_NDamW5V22p_7g",
       authDomain: "project-2017346322365333590.firebaseapp.com",
@@ -501,12 +485,23 @@
     const ctx = canvas.getContext('2d');
     ctx.imageSmoothingEnabled = false;
 
+    // ★ iOS 사파리 대응 오디오 엔진
     const AudioContext = window.AudioContext || window.webkitAudioContext;
-    let audioCtx;
+    let audioCtx = null;
+
+    function initAudioOnUserAction() {
+      if (!audioCtx) {
+        audioCtx = new AudioContext();
+      }
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+    }
 
     function playTone(freq, type, duration, vol = 0.12) {
       try {
-        if (!audioCtx) audioCtx = new AudioContext();
+        if (!audioCtx) return;
+        if (audioCtx.state === 'suspended') audioCtx.resume();
         const osc = audioCtx.createOscillator();
         const gain = audioCtx.createGain();
         osc.type = type;
@@ -532,7 +527,6 @@
       setTimeout(() => playTone(240, 'sawtooth', 0.4, 0.3), 120);
     }
 
-    // 게임 변수
     let score = 0;
     let timeLeft = 45;
     let anger = 0;
@@ -548,6 +542,7 @@
     const meterFill = document.getElementById('meterFill');
     const meterText = document.getElementById('meterText');
     const stealBtn = document.getElementById('stealBtn');
+    const startBtn = document.getElementById('startBtn');
     const overlay = document.getElementById('gameOverlay');
     const overlayTitle = document.getElementById('overlayTitle');
     const overlayDesc = document.getElementById('overlayDesc');
@@ -560,9 +555,27 @@
       nicknameInput.value = localStorage.getItem('bulldog_nickname');
     }
 
+    // ★ 모바일/iOS 터치 이벤트 바인딩 (onmousedown 대신 touchstart/click 완벽 지원)
+    function handleStartTrigger(e) {
+      e.preventDefault();
+      initAudioOnUserAction();
+      startGame();
+    }
+    startBtn.addEventListener('click', handleStartTrigger);
+    startBtn.addEventListener('touchstart', handleStartTrigger, { passive: false });
+
+    function handleStealTrigger(e) {
+      e.preventDefault();
+      initAudioOnUserAction();
+      attemptSteal();
+    }
+    stealBtn.addEventListener('mousedown', handleStealTrigger);
+    stealBtn.addEventListener('touchstart', handleStealTrigger, { passive: false });
+
     window.addEventListener('keydown', (e) => {
       if (e.code === 'Space') {
         e.preventDefault();
+        initAudioOnUserAction();
         attemptSteal();
       }
     });
@@ -571,7 +584,6 @@
       const name = nicknameInput.value.trim() || '익명 도둑';
       localStorage.setItem('bulldog_nickname', name);
 
-      if (!audioCtx) audioCtx = new AudioContext();
       score = 0;
       timeLeft = 45;
       anger = 0;
@@ -699,7 +711,6 @@
       });
     }
 
-    // TOP 15 + 왕관 + 이모티콘 렌더링
     db.collection('scores')
       .orderBy('score', 'desc')
       .onSnapshot((snapshot) => {
@@ -762,7 +773,6 @@
         rankList.innerHTML = `<div class="empty-msg" style="color:#ff5252;">순위표 연결 중... (잠시 후 다시 시도)</div>`;
       });
 
-    // 그래픽 렌더러
     function render() {
       ctx.fillStyle = '#161329';
       ctx.fillRect(0, 0, 240, 175);
