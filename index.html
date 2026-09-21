@@ -268,12 +268,30 @@
       align-items: center;
       margin-bottom: 10px;
       border-bottom: 2px dashed #45a29e;
-      padding-bottom: 6px;
+      padding-bottom: 8px;
+    }
+
+    .leaderboard-title-box {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
     }
 
     .leaderboard-title {
       font-size: 10px;
       color: #ffde59;
+    }
+
+    /* 총 플레이어 수 표시 뱃지 */
+    .player-count-badge {
+      font-family: 'Noto Sans KR', sans-serif;
+      font-size: 10px;
+      font-weight: 700;
+      color: #0b0c10;
+      background: #66fcf1;
+      padding: 2px 7px;
+      border-radius: 10px;
     }
 
     .live-indicator {
@@ -349,7 +367,6 @@
       padding: 14px 0;
     }
 
-    /* ★ 추가: 실시간 한줄평 방명록 스타일 ★ */
     .guestbook-card {
       width: 100%;
       max-width: 460px;
@@ -509,10 +526,14 @@
   <!-- 실시간 온라인 랭킹 리더보드 (TOP 15) -->
   <div class="leaderboard-card">
     <div class="leaderboard-header">
-      <div class="leaderboard-title">🏆 LIVE LEADERBOARD (TOP 15)</div>
+      <div class="leaderboard-title-box">
+        <div class="leaderboard-title">🏆 LEADERBOARD</div>
+        <!-- ★ 총 플레이어 수 실시간 뱃지 ★ -->
+        <div class="player-count-badge" id="playerCountBadge">👥 총 0명 참여</div>
+      </div>
       <div class="live-indicator">
         <div class="live-dot"></div>
-        <span>실시간 연동 중</span>
+        <span>실시간 연동</span>
       </div>
     </div>
     <div class="rank-list" id="rankList">
@@ -520,7 +541,7 @@
     </div>
   </div>
 
-  <!-- ★ 실시간 한줄평 방명록 카드 ★ -->
+  <!-- 실시간 한줄평 방명록 카드 -->
   <div class="guestbook-card">
     <div class="leaderboard-header" style="border-bottom-color: #66fcf1;">
       <div class="leaderboard-title" style="color: #66fcf1;">💬 실시간 한줄평 (도발 & 후기)</div>
@@ -602,6 +623,7 @@
     const nicknameInput = document.getElementById('playerNickname');
     const nameBox = document.getElementById('nameBox');
     const rankList = document.getElementById('rankList');
+    const playerCountBadge = document.getElementById('playerCountBadge');
 
     if (localStorage.getItem('bulldog_nickname')) {
       nicknameInput.value = localStorage.getItem('bulldog_nickname');
@@ -761,11 +783,12 @@
       });
     }
 
-    // 랭킹 수신
+    // ★ 실시간 랭킹 및 총 플레이어 수 카운트 ★
     db.collection('scores')
       .orderBy('score', 'desc')
       .onSnapshot((snapshot) => {
         if (snapshot.empty) {
+          playerCountBadge.innerText = `👥 총 0명 참여`;
           rankList.innerHTML = `<div class="empty-msg">아직 기록이 없습니다. 첫 챔피언이 되어보세요!</div>`;
           return;
         }
@@ -779,6 +802,10 @@
             uniqueUsers.set(userName, userScore);
           }
         });
+
+        // 총 고유 플레이어 수 업데이트
+        const totalPlayers = uniqueUsers.size;
+        playerCountBadge.innerText = `👥 총 ${totalPlayers}명 참여`;
 
         const sortedList = Array.from(uniqueUsers.entries())
           .map(([name, score]) => ({ name, score }))
@@ -821,7 +848,7 @@
         rankList.innerHTML = html;
       });
 
-    // ★ 실시간 한줄평 방명록 로직 ★
+    // 실시간 한줄평 방명록
     function submitComment() {
       const commentInput = document.getElementById('commentInput');
       const text = commentInput.value.trim();
