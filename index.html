@@ -274,7 +274,7 @@
     .leaderboard-title-box {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 6px;
       flex-wrap: wrap;
     }
 
@@ -283,15 +283,21 @@
       color: #ffde59;
     }
 
-    /* 총 플레이어 수 표시 뱃지 */
-    .player-count-badge {
+    /* 누적 접속자 & 참가자 뱃지 */
+    .stat-badge {
       font-family: 'Noto Sans KR', sans-serif;
-      font-size: 10px;
+      font-size: 9px;
       font-weight: 700;
-      color: #0b0c10;
+      padding: 2px 6px;
+      border-radius: 8px;
+    }
+    .badge-visits {
+      background: #45a29e;
+      color: #fff;
+    }
+    .badge-players {
       background: #66fcf1;
-      padding: 2px 7px;
-      border-radius: 10px;
+      color: #0b0c10;
     }
 
     .live-indicator {
@@ -437,6 +443,7 @@
     }
 
     .comment-item {
+      position: relative;
       background: #1a222d;
       border-radius: 6px;
       padding: 8px 10px;
@@ -450,10 +457,12 @@
 
     .comment-header {
       display: flex;
-      justify-content: space-between;
+      align-items: center;
+      gap: 6px;
       color: #ffde59;
       font-weight: 900;
       font-size: 11px;
+      padding-right: 20px;
     }
 
     .comment-time {
@@ -467,6 +476,24 @@
       color: #e0e0e0;
       word-break: break-word;
       line-height: 1.4;
+    }
+
+    /* 댓글 삭제 버튼 */
+    .del-comment-btn {
+      position: absolute;
+      top: 6px;
+      right: 8px;
+      background: none;
+      border: none;
+      color: #ff5252;
+      font-size: 12px;
+      font-weight: 900;
+      cursor: pointer;
+      padding: 2px 5px;
+      border-radius: 4px;
+    }
+    .del-comment-btn:hover {
+      background: rgba(255, 82, 82, 0.2);
     }
   </style>
 </head>
@@ -528,8 +555,9 @@
     <div class="leaderboard-header">
       <div class="leaderboard-title-box">
         <div class="leaderboard-title">🏆 LEADERBOARD</div>
-        <!-- ★ 총 플레이어 수 실시간 뱃지 ★ -->
-        <div class="player-count-badge" id="playerCountBadge">👥 총 0명 참여</div>
+        <!-- ★ 실시간 누적 접속 수 & 참가자 수 뱃지 ★ -->
+        <span class="stat-badge badge-visits" id="visitsBadge">👁️ 누적 0회</span>
+        <span class="stat-badge badge-players" id="playersBadge">👥 0명 참가</span>
       </div>
       <div class="live-indicator">
         <div class="live-dot"></div>
@@ -568,6 +596,19 @@
 
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
+
+    // ★ 1. 누적 접속자 수 증가 및 실시간 수신 로직 ★
+    const visitDocRef = db.collection('analytics').doc('visitors');
+    visitDocRef.set({
+      count: firebase.firestore.FieldValue.increment(1)
+    }, { merge: true });
+
+    visitDocRef.onSnapshot((doc) => {
+      if (doc.exists) {
+        const totalVisits = doc.data().count || 0;
+        document.getElementById('visitsBadge').innerText = `👁️ 누적 ${totalVisits.toLocaleString()}회`;
+      }
+    });
 
     const canvas = document.getElementById('gameCanvas');
     const ctx = canvas.getContext('2d');
@@ -623,7 +664,7 @@
     const nicknameInput = document.getElementById('playerNickname');
     const nameBox = document.getElementById('nameBox');
     const rankList = document.getElementById('rankList');
-    const playerCountBadge = document.getElementById('playerCountBadge');
+    const playersBadge = document.getElementById('playersBadge');
 
     if (localStorage.getItem('bulldog_nickname')) {
       nicknameInput.value = localStorage.getItem('bulldog_nickname');
@@ -783,12 +824,12 @@
       });
     }
 
-    // ★ 실시간 랭킹 및 총 플레이어 수 카운트 ★
+    // 랭킹 및 고유 참가자 집계
     db.collection('scores')
       .orderBy('score', 'desc')
       .onSnapshot((snapshot) => {
         if (snapshot.empty) {
-          playerCountBadge.innerText = `👥 총 0명 참여`;
+          playersBadge.innerText = `👥 0명 참가`;
           rankList.innerHTML = `<div class="empty-msg">아직 기록이 없습니다. 첫 챔피언이 되어보세요!</div>`;
           return;
         }
@@ -803,9 +844,7 @@
           }
         });
 
-        // 총 고유 플레이어 수 업데이트
-        const totalPlayers = uniqueUsers.size;
-        playerCountBadge.innerText = `👥 총 ${totalPlayers}명 참여`;
+        playersBadge.innerText = `👥 ${uniqueUsers.size}명 참가`;
 
         const sortedList = Array.from(uniqueUsers.entries())
           .map(([name, score]) => ({ name, score }))
@@ -848,7 +887,7 @@
         rankList.innerHTML = html;
       });
 
-    // 실시간 한줄평 방명록
+    // 한줄평 등록
     function submitComment() {
       const commentInput = document.getElementById('commentInput');
       const text = commentInput.value.trim();
@@ -873,6 +912,24 @@
       }
     });
 
+    // ★ 2. 댓글 삭제 기능 (비밀번호: 19970130) ★
+    function deleteComment(docId) {
+      const inputPw = prompt("댓글을 삭제하려면 관리자 비밀번호를 입력하세요:");
+      if (!inputPw) return;
+
+      if (inputPw === "19970130") {
+        db.collection('comments').doc(docId).delete().then(() => {
+          alert("댓글이 성공적으로 삭제되었습니다.");
+        }).catch(err => {
+          alert("삭제 중 오류가 발생했습니다.");
+          console.error(err);
+        });
+      } else {
+        alert("비밀번호가 올바르지 않습니다.");
+      }
+    }
+
+    // 실시간 한줄평 목록 렌더링
     db.collection('comments')
       .orderBy('createdAt', 'desc')
       .limit(30)
@@ -886,6 +943,7 @@
         let html = '';
         snapshot.forEach((doc) => {
           const data = doc.data();
+          const docId = doc.id;
           let timeStr = '방금';
           if (data.createdAt && data.createdAt.toDate) {
             const d = data.createdAt.toDate();
@@ -894,6 +952,7 @@
 
           html += `
             <div class="comment-item">
+              <button class="del-comment-btn" onclick="deleteComment('${docId}')" title="삭제">✕</button>
               <div class="comment-header">
                 <span>${data.name}</span>
                 <span class="comment-time">${timeStr}</span>
