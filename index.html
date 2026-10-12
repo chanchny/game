@@ -163,37 +163,56 @@
       align-items: center;
       justify-content: space-evenly;
       text-align: center;
-      padding: 8px 12px;
+      padding: 6px 12px;
       z-index: 20;
+    }
+
+    /* ★ 로고 이미지와 더 커진 PAWSE MAGAZINE 타이틀 컨테이너 ★ */
+    .brand-header {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .pawse-logo-img {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      border: 2px solid #a855f7;
+      box-shadow: 0 0 8px rgba(168, 85, 247, 0.8);
+      object-fit: cover;
+      display: block;
     }
 
     .creator-tag {
       font-family: 'Noto Sans KR', sans-serif;
-      font-size: 11px;
+      font-size: 15px; /* 글자 크기 확대 */
       font-weight: 900;
       color: #ffde59;
       letter-spacing: 1.5px;
-      text-shadow: 0 0 6px rgba(255, 222, 89, 0.8), 1px 1px 0 #000;
+      text-shadow: 0 0 8px rgba(255, 222, 89, 0.8), 2px 2px 0 #000;
     }
 
     .overlay h2 {
-      font-size: 14px;
+      font-size: 15px;
       color: #ff3344;
-      line-height: 1.3;
+      line-height: 1.2;
       letter-spacing: 0.5px;
+      margin-top: -2px;
     }
 
     .desc-box {
       background: rgba(18, 24, 32, 0.85);
       border: 1px solid #45a29e;
       border-radius: 6px;
-      padding: 6px 8px;
+      padding: 5px 8px;
       width: 95%;
     }
 
     .desc-box p {
       font-family: 'Noto Sans KR', sans-serif;
-      font-size: 10px;
+      font-size: 9.5px;
       font-weight: 700;
       color: #ffde59;
       line-height: 1.45;
@@ -209,12 +228,12 @@
       align-items: center;
       justify-content: center;
       gap: 10px;
-      margin: 2px 0;
+      margin: 1px 0;
     }
 
     .slot-avatar-wrapper {
-      width: 44px;
-      height: 44px;
+      width: 42px;
+      height: 42px;
       border-radius: 50%;
       border: 2px solid #ffde59;
       background: #111;
@@ -223,7 +242,7 @@
       justify-content: center;
       overflow: hidden;
       box-shadow: 0 0 8px rgba(255, 222, 89, 0.5);
-      font-size: 22px;
+      font-size: 20px;
       cursor: pointer;
     }
 
@@ -285,8 +304,8 @@
     }
 
     .paw-start-btn svg {
-      width: 90px;
-      height: 70px;
+      width: 86px;
+      height: 68px;
       filter: drop-shadow(0 4px 0 #b38b14);
       pointer-events: none;
     }
@@ -295,7 +314,7 @@
       position: absolute;
       bottom: 11px;
       font-family: 'Press Start 2P', monospace;
-      font-size: 9.5px;
+      font-size: 9px;
       font-weight: 900;
       color: #1a0f00;
       pointer-events: none;
@@ -663,7 +682,7 @@
       background: rgba(255, 82, 82, 0.2);
     }
 
-    /* ★ 레트로 SNS 공유 모달창 스타일 ★ */
+    /* 레트로 SNS 공유 모달창 스타일 */
     .share-modal-overlay {
       display: none;
       position: fixed;
@@ -729,7 +748,6 @@
     .btn-instagram { background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); color: #fff; }
     .btn-facebook { background: #1877f2; color: #fff; }
     .btn-linkcopy { background: #66fcf1; color: #0b0c10; grid-column: span 2; }
-    .btn-native { background: #45a29e; color: #fff; grid-column: span 2; }
 
     .share-close-btn {
       font-family: 'Press Start 2P', monospace;
@@ -756,11 +774,24 @@
       <canvas id="gameCanvas" width="240" height="180"></canvas>
       
       <div id="gameOverlay" class="overlay">
-        <!-- 1. 타이틀 -->
-        <div class="creator-tag">PAWSE MAGAZINE</div>
+        <!-- ★ 로고 이미지와 더 커진 PAWSE MAGAZINE 타이틀 ★ -->
+        <div class="brand-header">
+          <svg class="pawse-logo-img" viewBox="0 0 100 100">
+            <circle cx="50" cy="50" r="48" fill="#111" stroke="#a855f7" stroke-width="4"/>
+            <!-- 발자국 -->
+            <ellipse cx="68" cy="28" rx="4" ry="6" fill="#f5f5f5"/>
+            <ellipse cx="78" cy="32" rx="4" ry="6" fill="#f5f5f5"/>
+            <ellipse cx="62" cy="38" rx="4" ry="6" fill="#f5f5f5"/>
+            <ellipse cx="80" cy="42" rx="4" ry="6" fill="#f5f5f5"/>
+            <path d="M66,42 C66,38 74,38 74,42 C76,46 72,50 69,50 C66,50 64,46 66,42 Z" fill="#f5f5f5"/>
+            <!-- Pawse 텍스트 엠블럼 -->
+            <text x="50" y="65" text-anchor="middle" font-family="'Noto Sans KR', sans-serif" font-weight="900" font-size="20" fill="#ffffff" letter-spacing="-1">Pawse</text>
+          </svg>
+          <div class="creator-tag">PAWSE MAGAZINE</div>
+        </div>
+        
         <h2 id="overlayTitle">BULLDOG GAME</h2>
         
-        <!-- 2. 가독성 개선된 안내 문구 -->
         <div class="desc-box" id="overlayDescBox">
           <p id="overlayDesc">
             ⚠️ <b>예민보스 불독</b>의 뼈를 훔치세요!<br>
@@ -769,7 +800,6 @@
           </p>
         </div>
 
-        <!-- 7. 슬롯머신 아바타 & 닉네임 입력 -->
         <div class="profile-setup-box" id="nameBox">
           <div class="slot-avatar-wrapper" id="slotAvatar" title="닉네임을 적으면 강아지가 추첨됩니다!">
             <span id="avatarIcon">🐶</span>
@@ -781,7 +811,6 @@
           </div>
         </div>
         
-        <!-- 시작 버튼 -->
         <button class="paw-start-btn" id="startBtn">
           <svg viewBox="0 0 100 85">
             <ellipse cx="20" cy="22" rx="10" ry="14" fill="#ffde59" />
@@ -793,7 +822,6 @@
           <span class="paw-text" id="startBtnText">START</span>
         </button>
 
-        <!-- 5 & 6. 게임 오버 시 나타나는 공유 + 한줄평 + 재도전 버튼 -->
         <div class="gameover-actions" id="gameOverActions">
           <button class="share-btn" id="shareBtn" onclick="openShareModal()">🔗 친구랑 내기 할 사람</button>
           
@@ -822,7 +850,6 @@
     </div>
   </div>
 
-  <!-- 실시간 온라인 랭킹 리더보드 -->
   <div class="leaderboard-card">
     <div class="leaderboard-header">
       <div class="leaderboard-title-box">
@@ -840,7 +867,6 @@
     </div>
   </div>
 
-  <!-- 실시간 한줄평 방명록 카드 -->
   <div class="guestbook-card">
     <div class="leaderboard-header" style="border-bottom-color: #66fcf1;">
       <div class="leaderboard-title" style="color: #66fcf1;">💬 실시간 한줄평 (도발 & 후기)</div>
@@ -854,7 +880,7 @@
     </div>
   </div>
 
-  <!-- ★ 레트로 SNS 공유 모달창 ★ -->
+  <!-- SNS 공유 모달창 -->
   <div class="share-modal-overlay" id="shareModalOverlay" onclick="closeShareModal(event)">
     <div class="share-modal" onclick="event.stopPropagation()">
       <div class="share-modal-title">📢 친구에게 자랑 & 공유하기</div>
@@ -865,7 +891,6 @@
         <button class="share-item-btn btn-instagram" onclick="shareToInstagram()">📸 인스타그램</button>
         <button class="share-item-btn btn-facebook" onclick="shareToFacebook()">📘 페이스북</button>
         <button class="share-item-btn btn-linkcopy" onclick="copyGameLink()">🔗 게임 링크 복사</button>
-        <button class="share-item-btn btn-native" id="nativeShareBtn" onclick="shareViaNavigator()" style="display:none;">📱 스마트폰 기본 공유창</button>
       </div>
 
       <button class="share-close-btn" onclick="closeShareModal()">CLOSE</button>
@@ -886,7 +911,6 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
 
-    // 4. 누적 접속자 수 (3000부터 카운팅)
     const visitDocRef = db.collection('analytics').doc('visitors');
     visitDocRef.set({
       count: firebase.firestore.FieldValue.increment(1)
@@ -904,7 +928,6 @@
     const ctx = canvas.getContext('2d');
     ctx.imageSmoothingEnabled = false;
 
-    // 7. 강아지 캐릭터 리스트 및 슬롯머신 로직
     const dogAvatars = ['🐶', '🐕', '🐩', '🦮', '🐕‍🦺', '🦊', '🐺', '🐾'];
     
     function getDeterministicAvatar(name) {
@@ -1118,7 +1141,6 @@
       render();
     }
 
-    // 랜덤 공유 문구 풀
     const sharePhrases = [
       '🔗 친구랑 내기 할 사람!',
       '📢 친구에게 공유하기',
@@ -1148,13 +1170,8 @@
       }, 750);
     }
 
-    // ★ SNS 공유 모달창 열기 / 닫기 ★
     function openShareModal() {
-      const modal = document.getElementById('shareModalOverlay');
-      modal.style.display = 'flex';
-      if (navigator.share) {
-        document.getElementById('nativeShareBtn').style.display = 'flex';
-      }
+      document.getElementById('shareModalOverlay').style.display = 'flex';
     }
 
     function closeShareModal(e) {
@@ -1173,9 +1190,20 @@
     }
 
     function shareToKakao() {
-      // 카카오톡 웹/앱 범용 공유 링크
-      const text = encodeURIComponent(getShareText() + '\n' + window.location.href);
-      window.open(`https://sharer.kakao.com/talk/friends/picker?link=${encodeURIComponent(window.location.href)}`, '_blank');
+      const shareData = {
+        title: 'PAWSE MAGAZINE BULLDOG GAME',
+        text: getShareText(),
+        url: window.location.href
+      };
+
+      if (navigator.share) {
+        navigator.share(shareData).catch(() => {});
+      } else {
+        const text = `${getShareText()}\n게임하러 가기 👉 ${window.location.href}`;
+        navigator.clipboard.writeText(text).then(() => {
+          alert("카카오톡 공유 문구와 링크가 복사되었습니다!\n카카오톡 대화방에 붙여넣기(Ctrl+V) 해주세요 🦴");
+        });
+      }
     }
 
     function shareToX() {
@@ -1190,25 +1218,13 @@
     }
 
     function shareToInstagram() {
-      // 인스타그램은 웹 직접 글 작성이 불가능하므로 텍스트 복사 후 인스타로 유도
-      const text = getShareText() + ' ' + window.location.href;
+      const text = `${getShareText()} ${window.location.href}`;
       navigator.clipboard.writeText(text).then(() => {
         alert("점수 및 게임 링크가 복사되었습니다! 인스타그램 스토리나 DM에 바로 붙여넣어 보세요.");
         window.open('https://instagram.com', '_blank');
       });
     }
 
-    function shareViaNavigator() {
-      if (navigator.share) {
-        navigator.share({
-          title: 'PAWSE MAGAZINE BULLDOG GAME',
-          text: getShareText(),
-          url: window.location.href
-        }).catch(() => {});
-      }
-    }
-
-    // 게임오버 한줄평 등록
     function submitGameOverComment() {
       const goInput = document.getElementById('goCommentInput');
       const text = goInput.value.trim();
@@ -1271,7 +1287,6 @@
       }
     }
 
-    // 랭킹 및 아바타 렌더링
     db.collection('scores')
       .orderBy('score', 'desc')
       .onSnapshot((snapshot) => {
@@ -1341,7 +1356,6 @@
         rankList.innerHTML = html;
       });
 
-    // 한줄평 등록
     function submitComment() {
       const commentInput = document.getElementById('commentInput');
       const text = commentInput.value.trim();
@@ -1382,7 +1396,6 @@
       }
     }
 
-    // 한줄평 목록 렌더링
     db.collection('comments')
       .orderBy('createdAt', 'desc')
       .limit(30)
@@ -1417,7 +1430,6 @@
         commentList.innerHTML = html;
       });
 
-    // 그래픽 렌더링
     function render() {
       ctx.fillStyle = '#161329';
       ctx.fillRect(0, 0, 240, 180);
@@ -1452,7 +1464,6 @@
         ctx.fillText('GRRR..!!', 155, 38 + Math.sin(Date.now() / 70) * 3);
       }
 
-      // 화면 우측 하단 BSC 각인
       ctx.save();
       ctx.font = '7px "Press Start 2P", monospace';
       ctx.fillStyle = 'rgba(102, 252, 241, 0.45)';
@@ -1480,8 +1491,18 @@
       ctx.beginPath();
       ctx.ellipse(180, 112, 35, 22, 0, 0, Math.PI * 2);
       ctx.fill();
+
       ctx.fillStyle = '#6f4422';
-      ctx.fillRect(195, 122, 14, 10);
+      ctx.fillRect(205, 116, 12, 7);
+
+      ctx.fillStyle = '#7a4b2a';
+      ctx.beginPath();
+      ctx.ellipse(188, 126, 14, 9, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = '#d4a373';
+      ctx.fillRect(194, 127, 8, 7);
+      ctx.fillStyle = '#331a08';
+      ctx.fillRect(200, 131, 3, 3);
 
       ctx.fillStyle = '#d90429';
       ctx.fillRect(150, 84, 12, 38);
@@ -1489,6 +1510,16 @@
       ctx.fillRect(154, 89, 5, 5);
       ctx.fillRect(154, 102, 5, 5);
       ctx.fillRect(154, 114, 5, 5);
+
+      ctx.fillStyle = '#8b5a36';
+      ctx.beginPath();
+      ctx.ellipse(135, 128, 16, 9, -0.2, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = '#d4a373';
+      ctx.fillRect(124, 127, 9, 7);
+      ctx.fillStyle = '#222';
+      ctx.fillRect(122, 131, 2, 3);
+      ctx.fillRect(125, 132, 2, 3);
 
       ctx.fillStyle = '#a77048';
       ctx.beginPath();
@@ -1527,21 +1558,32 @@
         ctx.arc(112, 80, 7, 0.2, Math.PI - 0.2);
         ctx.stroke();
 
-        ctx.fillStyle = '#fff';
+        ctx.beginPath();
+        ctx.arc(96, 76, 5, 0.3, Math.PI - 0.3);
+        ctx.stroke();
+
+        ctx.fillStyle = '#66fcf1';
         ctx.fillRect(86, 106, 4, 6);
       } 
       else if (dogState === 'STIRRING') {
         ctx.strokeStyle = '#331100';
         ctx.lineWidth = 3;
-        ctx.beginPath();
-        ctx.moveTo(102, 74);
-        ctx.lineTo(118, 81);
-        ctx.stroke();
 
+        ctx.beginPath();
+        ctx.moveTo(104, 75); ctx.lineTo(120, 81);
+        ctx.stroke();
         ctx.fillStyle = '#ffde59';
-        ctx.fillRect(108, 77, 10, 4);
+        ctx.fillRect(108, 77, 9, 4);
         ctx.fillStyle = '#000';
         ctx.fillRect(112, 77, 4, 4);
+
+        ctx.beginPath();
+        ctx.moveTo(92, 72); ctx.lineTo(101, 76);
+        ctx.stroke();
+        ctx.fillStyle = '#ffde59';
+        ctx.fillRect(94, 73, 6, 3);
+        ctx.fillStyle = '#000';
+        ctx.fillRect(96, 73, 3, 3);
 
         ctx.fillStyle = '#1a0000';
         ctx.fillRect(86, 102, 18, 8);
@@ -1552,12 +1594,21 @@
       else {
         ctx.fillStyle = '#d90429';
         ctx.beginPath();
-        ctx.arc(112, 78, 11, 0, Math.PI * 2);
+        ctx.arc(114, 78, 11, 0, Math.PI * 2);
         ctx.fill();
         ctx.fillStyle = '#ffea00';
-        ctx.fillRect(108, 75, 4, 7);
+        ctx.fillRect(110, 75, 4, 7);
         ctx.fillStyle = '#fff';
-        ctx.fillRect(115, 72, 3, 3);
+        ctx.fillRect(117, 72, 3, 3);
+
+        ctx.fillStyle = '#d90429';
+        ctx.beginPath();
+        ctx.arc(97, 74, 8, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = '#ffea00';
+        ctx.fillRect(94, 72, 3, 5);
+        ctx.fillStyle = '#fff';
+        ctx.fillRect(99, 70, 2, 2);
 
         ctx.strokeStyle = '#d90429';
         ctx.lineWidth = 2;
@@ -1599,14 +1650,22 @@
 
     function drawThiefHand() {
       ctx.save();
-      ctx.fillStyle = '#111';
-      ctx.fillRect(10, 116, 35, 16);
-      ctx.fillRect(40, 120, 15, 8);
+      ctx.fillStyle = '#d90429';
+      ctx.fillRect(0, 114, 26, 20);
+      ctx.fillStyle = '#fff';
+      ctx.fillRect(24, 114, 4, 20);
 
-      ctx.fillStyle = '#f8f9fa';
-      ctx.fillRect(48, 118, 15, 4);
-      ctx.fillRect(46, 116, 4, 8);
-      ctx.fillRect(60, 116, 4, 8);
+      ctx.fillStyle = '#f8d0a0';
+      ctx.fillRect(28, 118, 18, 12);
+
+      ctx.fillStyle = '#e8ba80';
+      ctx.fillRect(42, 116, 10, 6);
+      ctx.fillRect(40, 123, 11, 6);
+
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(48, 119, 16, 4);
+      ctx.fillRect(46, 117, 4, 8);
+      ctx.fillRect(62, 117, 4, 8);
       ctx.restore();
     }
 
