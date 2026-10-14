@@ -154,11 +154,78 @@
       color: #777 !important;
     }
 
+    /* 1단계 오프닝 타이틀 오버레이 */
+    .title-overlay {
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: transparent;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 8px 14px;
+      z-index: 25;
+    }
+
+    .title-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .main-logo-sub {
+      font-family: 'Press Start 2P', monospace;
+      font-size: 9px;
+      color: #fff;
+      letter-spacing: 2px;
+      text-shadow: 2px 2px 0 #000, -1px -1px 0 #000;
+    }
+
+    .main-logo-title {
+      font-family: 'Press Start 2P', monospace;
+      font-size: 16px;
+      line-height: 1.35;
+      color: #ffd214;
+      text-align: center;
+      text-shadow: 
+        3px 3px 0 #e65100, 
+        -2px -2px 0 #000, 
+        2px -2px 0 #000, 
+        -2px 2px 0 #000, 
+        3px 4px 0 #000;
+      letter-spacing: 1px;
+    }
+
+    .title-start-btn {
+      font-family: 'Press Start 2P', monospace;
+      font-size: 12px;
+      color: #fff;
+      background: #4caf50;
+      border: 3px solid #fff;
+      border-radius: 8px;
+      padding: 10px 24px;
+      cursor: pointer;
+      box-shadow: 0 4px 0 #1b5e20, 0 6px 12px rgba(0,0,0,0.6);
+      animation: pulseBtn 1.2s infinite alternate;
+    }
+
+    @keyframes pulseBtn {
+      0% { transform: scale(1); box-shadow: 0 4px 0 #1b5e20, 0 0 10px rgba(76,175,80,0.4); }
+      100% { transform: scale(1.05); box-shadow: 0 4px 0 #1b5e20, 0 0 20px rgba(76,175,80,0.8); }
+    }
+
+    .title-start-btn:active {
+      transform: translateY(3px) scale(0.98);
+      box-shadow: 0 1px 0 #1b5e20;
+    }
+
+    /* 2단계 프로필 & 룰 설명 오버레이 */
     .overlay {
       position: absolute;
       top: 0; left: 0; width: 100%; height: 100%;
       background: rgba(0, 0, 0, 0.94);
-      display: flex;
+      display: none;
       flex-direction: column;
       align-items: center;
       justify-content: space-evenly;
@@ -167,27 +234,9 @@
       z-index: 20;
     }
 
-    /* ★ 로고 이미지와 더 커진 PAWSE MAGAZINE 타이틀 컨테이너 ★ */
-    .brand-header {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-    }
-
-    .pawse-logo-img {
-      width: 26px;
-      height: 26px;
-      border-radius: 50%;
-      border: 2px solid #a855f7;
-      box-shadow: 0 0 8px rgba(168, 85, 247, 0.8);
-      object-fit: cover;
-      display: block;
-    }
-
     .creator-tag {
       font-family: 'Noto Sans KR', sans-serif;
-      font-size: 15px; /* 글자 크기 확대 */
+      font-size: 15px;
       font-weight: 900;
       color: #ffde59;
       letter-spacing: 1.5px;
@@ -195,7 +244,7 @@
     }
 
     .overlay h2 {
-      font-size: 15px;
+      font-size: 14px;
       color: #ff3344;
       line-height: 1.2;
       letter-spacing: 0.5px;
@@ -314,7 +363,7 @@
       position: absolute;
       bottom: 11px;
       font-family: 'Press Start 2P', monospace;
-      font-size: 9px;
+      font-size: 8.5px;
       font-weight: 900;
       color: #1a0f00;
       pointer-events: none;
@@ -682,7 +731,6 @@
       background: rgba(255, 82, 82, 0.2);
     }
 
-    /* 레트로 SNS 공유 모달창 스타일 */
     .share-modal-overlay {
       display: none;
       position: fixed;
@@ -773,23 +821,19 @@
     <div class="screen-wrapper">
       <canvas id="gameCanvas" width="240" height="180"></canvas>
       
-      <div id="gameOverlay" class="overlay">
-        <!-- ★ 로고 이미지와 더 커진 PAWSE MAGAZINE 타이틀 ★ -->
-        <div class="brand-header">
-          <svg class="pawse-logo-img" viewBox="0 0 100 100">
-            <circle cx="50" cy="50" r="48" fill="#111" stroke="#a855f7" stroke-width="4"/>
-            <!-- 발자국 -->
-            <ellipse cx="68" cy="28" rx="4" ry="6" fill="#f5f5f5"/>
-            <ellipse cx="78" cy="32" rx="4" ry="6" fill="#f5f5f5"/>
-            <ellipse cx="62" cy="38" rx="4" ry="6" fill="#f5f5f5"/>
-            <ellipse cx="80" cy="42" rx="4" ry="6" fill="#f5f5f5"/>
-            <path d="M66,42 C66,38 74,38 74,42 C76,46 72,50 69,50 C66,50 64,46 66,42 Z" fill="#f5f5f5"/>
-            <!-- Pawse 텍스트 엠블럼 -->
-            <text x="50" y="65" text-anchor="middle" font-family="'Noto Sans KR', sans-serif" font-weight="900" font-size="20" fill="#ffffff" letter-spacing="-1">Pawse</text>
-          </svg>
-          <div class="creator-tag">PAWSE MAGAZINE</div>
+      <!-- 1단계: 메인 오프닝 타이틀 화면 -->
+      <div id="titleOverlay" class="title-overlay">
+        <div class="title-box">
+          <div class="main-logo-sub">PAWSE MAGAZINE</div>
+          <div class="main-logo-title">BULLDOG<br>GAME</div>
         </div>
         
+        <button class="title-start-btn" id="titleStartBtn" onclick="goToLobby()">[ START ]</button>
+      </div>
+
+      <!-- 2단계: 프로필 설정 & 게임 룰 안내 화면 -->
+      <div id="gameOverlay" class="overlay">
+        <div class="creator-tag">PAWSE MAGAZINE</div>
         <h2 id="overlayTitle">BULLDOG GAME</h2>
         
         <div class="desc-box" id="overlayDescBox">
@@ -819,7 +863,7 @@
             <ellipse cx="80" cy="22" rx="10" ry="14" fill="#ffde59" />
             <path d="M22,46 C22,34 36,32 50,32 C64,32 78,34 78,46 C78,64 68,78 50,78 C32,78 22,64 22,46 Z" fill="#ffde59" />
           </svg>
-          <span class="paw-text" id="startBtnText">START</span>
+          <span class="paw-text" id="startBtnText">GAME START</span>
         </button>
 
         <div class="gameover-actions" id="gameOverActions">
@@ -993,7 +1037,7 @@
     let score = 0;
     let timeLeft = 45;
     let anger = 0;
-    let gameState = 'STOPPED';
+    let scene = 'TITLE'; // 'TITLE', 'LOBBY', 'PLAYING', 'GAMEOVER'
     let dogState = 'SLEEPING';
     let dogTimer = 0;
     let stirDuration = 0;
@@ -1006,6 +1050,7 @@
     const meterText = document.getElementById('meterText');
     const stealBtn = document.getElementById('stealBtn');
     const startBtn = document.getElementById('startBtn');
+    const titleOverlay = document.getElementById('titleOverlay');
     const overlay = document.getElementById('gameOverlay');
     const overlayTitle = document.getElementById('overlayTitle');
     const overlayDesc = document.getElementById('overlayDesc');
@@ -1029,6 +1074,18 @@
         triggerSlotMachine(nicknameInput.value.trim());
       }, 350);
     });
+
+    // 1단계 -> 2단계 이동 함수
+    function goToLobby() {
+      unlockAudio();
+      playTone(520, 'sine', 0.1);
+      scene = 'LOBBY';
+      titleOverlay.style.display = 'none';
+      overlay.style.display = 'flex';
+      startBtn.style.display = 'flex';
+      nameBox.style.display = 'flex';
+      gameOverActions.style.display = 'none';
+    }
 
     startBtn.addEventListener('click', () => {
       unlockAudio();
@@ -1061,18 +1118,19 @@
       anger = 0;
       dogState = 'SLEEPING';
       dogTimer = 60 + Math.random() * 60;
-      gameState = 'PLAYING';
+      scene = 'PLAYING';
 
       scoreVal.innerText = score;
       timeVal.innerText = timeLeft;
       meterFill.style.width = '0%';
       meterText.innerText = '0%';
       overlay.style.display = 'none';
+      titleOverlay.style.display = 'none';
       stealBtn.disabled = false;
     }
 
     function attemptSteal() {
-      if (gameState !== 'PLAYING') return;
+      if (scene !== 'PLAYING') return;
 
       playTone(650, 'sine', 0.07);
       setTimeout(() => playTone(920, 'sine', 0.09), 50);
@@ -1103,7 +1161,7 @@
       const dt = (now - lastTime) / 1000;
       lastTime = now;
 
-      if (gameState === 'PLAYING') {
+      if (scene === 'PLAYING') {
         secondCounter += dt;
         if (secondCounter >= 1) {
           secondCounter = 0;
@@ -1148,7 +1206,7 @@
     ];
 
     function triggerGameOver(msg) {
-      gameState = 'GAMEOVER';
+      scene = 'GAMEOVER';
       dogState = 'AWAKE';
       stealBtn.disabled = true;
       playTone(70, 'square', 0.6, 0.3);
@@ -1430,10 +1488,19 @@
         commentList.innerHTML = html;
       });
 
+    // 그래픽 렌더링
     function render() {
+      // 1단계 오프닝 타이틀 화면 렌더링 (레트로 마을/하늘 배경)
+      if (scene === 'TITLE') {
+        renderTitleScene();
+        return;
+      }
+
+      // 인게임 및 로비 화면 렌더링
       ctx.fillStyle = '#161329';
       ctx.fillRect(0, 0, 240, 180);
 
+      // 방석 바닥
       ctx.fillStyle = '#3d1c2e';
       ctx.beginPath();
       ctx.ellipse(140, 130, 95, 40, 0, 0, Math.PI * 2);
@@ -1452,7 +1519,7 @@
         handAnim--;
       }
 
-      if (dogState === 'SLEEPING' && gameState === 'PLAYING') {
+      if (dogState === 'SLEEPING' && scene === 'PLAYING') {
         snoreFrame = (snoreFrame + 0.05) % 3;
         ctx.fillStyle = '#66fcf1';
         ctx.font = '10px monospace';
@@ -1464,6 +1531,7 @@
         ctx.fillText('GRRR..!!', 155, 38 + Math.sin(Date.now() / 70) * 3);
       }
 
+      // 화면 우측 하단 BSC 각인
       ctx.save();
       ctx.font = '7px "Press Start 2P", monospace';
       ctx.fillStyle = 'rgba(102, 252, 241, 0.45)';
@@ -1472,6 +1540,118 @@
       ctx.restore();
     }
 
+    // ★ 1단계: 레트로 하늘 마을 오프닝 배경 렌더링 ★
+    let cloudOffset = 0;
+    function renderTitleScene() {
+      cloudOffset += 0.15;
+      if (cloudOffset > 240) cloudOffset = 0;
+
+      // 푸른 하늘
+      ctx.fillStyle = '#6cb7ff';
+      ctx.fillRect(0, 0, 240, 125);
+
+      // 먼 산과 언덕
+      ctx.fillStyle = '#5c9bd6';
+      ctx.beginPath();
+      ctx.arc(40, 140, 70, Math.PI, 0);
+      ctx.arc(170, 145, 90, Math.PI, 0);
+      ctx.fill();
+
+      // 구름 (천천히 흐름)
+      ctx.fillStyle = '#ffffff';
+      drawPixelCloud(30 - cloudOffset * 0.4, 25);
+      drawPixelCloud(160 - cloudOffset * 0.4, 15);
+      drawPixelCloud(270 - cloudOffset * 0.4, 30);
+
+      // 마을 집들과 건물들 (하단)
+      // 1. 좌측 3층 회색 빌라
+      ctx.fillStyle = '#e5e5e5';
+      ctx.fillRect(10, 85, 46, 50);
+      ctx.fillStyle = '#444';
+      ctx.fillRect(8, 83, 50, 4); // 지붕
+      // 창문들
+      ctx.fillStyle = '#222';
+      ctx.fillRect(16, 92, 10, 8);
+      ctx.fillRect(36, 92, 10, 8);
+      ctx.fillRect(16, 106, 10, 8);
+      ctx.fillRect(36, 106, 10, 8);
+      // 문
+      ctx.fillStyle = '#8d5b4c';
+      ctx.fillRect(26, 120, 12, 15);
+
+      // 2. 중앙 오두막 집 (벽돌 지붕)
+      ctx.fillStyle = '#c97a58';
+      ctx.fillRect(75, 92, 60, 43);
+      ctx.fillStyle = '#8b2e1f';
+      ctx.beginPath();
+      ctx.moveTo(70, 92);
+      ctx.lineTo(105, 74);
+      ctx.lineTo(140, 92);
+      ctx.fill();
+      // 창문 및 문
+      ctx.fillStyle = '#ffe082';
+      ctx.fillRect(84, 100, 10, 10);
+      ctx.fillStyle = '#4e342e';
+      ctx.fillRect(112, 106, 12, 29);
+
+      // 3. 우측 샵 건물
+      ctx.fillStyle = '#455a64';
+      ctx.fillRect(155, 82, 55, 53);
+      ctx.fillStyle = '#ff5252';
+      ctx.fillRect(152, 80, 61, 5); // 어닝
+      ctx.fillStyle = '#ffe082';
+      ctx.fillRect(162, 92, 16, 14);
+      ctx.fillRect(186, 92, 16, 14);
+
+      // 도트 나무들
+      drawPixelTree(62, 95);
+      drawPixelTree(142, 93);
+      drawPixelTree(215, 90);
+
+      // 땅바닥 잔디 (푸른 잔디밭)
+      ctx.fillStyle = '#4caf50';
+      ctx.fillRect(0, 134, 240, 46);
+      ctx.fillStyle = '#2e7d32';
+      ctx.fillRect(0, 137, 240, 4);
+
+      // 흙바닥 텍스처
+      ctx.fillStyle = '#795548';
+      ctx.fillRect(0, 144, 240, 36);
+      ctx.fillStyle = '#5d4037';
+      for (let i = 8; i < 240; i += 18) {
+        ctx.fillRect(i, 152, 6, 6);
+        ctx.fillRect(i + 8, 164, 5, 5);
+      }
+
+      // 우측 하단 BSC 각인
+      ctx.save();
+      ctx.font = '7px "Press Start 2P", monospace';
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
+      ctx.textAlign = 'right';
+      ctx.fillText('BSC', 234, 174);
+      ctx.restore();
+    }
+
+    function drawPixelCloud(x, y) {
+      ctx.fillRect(x, y, 32, 10);
+      ctx.fillRect(x + 5, y - 6, 20, 8);
+      ctx.fillRect(x + 8, y - 10, 12, 6);
+    }
+
+    function drawPixelTree(x, y) {
+      ctx.fillStyle = '#5d4037';
+      ctx.fillRect(x + 4, y + 10, 4, 15);
+      ctx.fillStyle = '#388e3c';
+      ctx.beginPath();
+      ctx.arc(x + 6, y + 8, 10, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = '#2e7d32';
+      ctx.beginPath();
+      ctx.arc(x + 8, y + 6, 7, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    // 인게임 불독 렌더링
     function drawBigHeadBulldog() {
       ctx.save();
       let shakeX = 0;
@@ -1487,14 +1667,17 @@
 
       ctx.translate(shakeX, shakeY);
 
+      // 몸통
       ctx.fillStyle = '#8b5a36';
       ctx.beginPath();
       ctx.ellipse(180, 112, 35, 22, 0, 0, Math.PI * 2);
       ctx.fill();
 
+      // 꼬리
       ctx.fillStyle = '#6f4422';
       ctx.fillRect(205, 116, 12, 7);
 
+      // 뒷다리 및 발바닥
       ctx.fillStyle = '#7a4b2a';
       ctx.beginPath();
       ctx.ellipse(188, 126, 14, 9, 0, 0, Math.PI * 2);
@@ -1504,6 +1687,7 @@
       ctx.fillStyle = '#331a08';
       ctx.fillRect(200, 131, 3, 3);
 
+      // 목줄
       ctx.fillStyle = '#d90429';
       ctx.fillRect(150, 84, 12, 38);
       ctx.fillStyle = '#edf2f4';
@@ -1511,6 +1695,7 @@
       ctx.fillRect(154, 102, 5, 5);
       ctx.fillRect(154, 114, 5, 5);
 
+      // 앞다리
       ctx.fillStyle = '#8b5a36';
       ctx.beginPath();
       ctx.ellipse(135, 128, 16, 9, -0.2, 0, Math.PI * 2);
@@ -1521,11 +1706,13 @@
       ctx.fillRect(122, 131, 2, 3);
       ctx.fillRect(125, 132, 2, 3);
 
+      // 머리
       ctx.fillStyle = '#a77048';
       ctx.beginPath();
       ctx.ellipse(126, 89, 42, 36, 0, 0, Math.PI * 2);
       ctx.fill();
 
+      // 양쪽 귀
       ctx.fillStyle = '#5c381c';
       ctx.beginPath();
       ctx.ellipse(140, 60, 12, 18, 0.4, 0, Math.PI * 2);
@@ -1534,6 +1721,7 @@
       ctx.ellipse(98, 66, 10, 16, -0.3, 0, Math.PI * 2);
       ctx.fill();
 
+      // 이마 주름
       ctx.strokeStyle = '#6f4422';
       ctx.lineWidth = 3;
       ctx.beginPath();
@@ -1541,16 +1729,19 @@
       ctx.arc(120, 74, 18, 0.5, Math.PI - 0.5);
       ctx.stroke();
 
+      // 주둥이
       ctx.fillStyle = '#d4a373';
       ctx.beginPath();
       ctx.ellipse(104, 100, 26, 20, 0, 0, Math.PI * 2);
       ctx.fill();
 
+      // 코
       ctx.fillStyle = '#111';
       ctx.fillRect(88, 90, 14, 10);
       ctx.fillStyle = '#444';
       ctx.fillRect(90, 92, 3, 3);
 
+      // 양쪽 눈
       if (dogState === 'SLEEPING') {
         ctx.strokeStyle = '#222';
         ctx.lineWidth = 3;
