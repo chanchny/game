@@ -228,7 +228,7 @@
       box-shadow: 0 1px 0 #b38b14;
     }
 
-    /* 2단계 프로필 & 룰 설명 오버레이 */
+    /* 2단계 프로필 & 룰 설명 & 게임오버 오버레이 */
     .overlay {
       position: absolute;
       top: 0; left: 0; width: 100%; height: 100%;
@@ -251,7 +251,7 @@
     }
 
     .overlay h2 {
-      font-size: 16px;
+      font-size: 17px;
       color: #ff2a2a;
       line-height: 1.2;
       letter-spacing: 1px;
@@ -260,7 +260,7 @@
     }
 
     .desc-box {
-      background: rgba(18, 24, 32, 0.85);
+      background: rgba(18, 24, 32, 0.88);
       border: 1px solid #45a29e;
       border-radius: 6px;
       padding: 6px 8px;
@@ -278,6 +278,51 @@
 
     .desc-box p b {
       color: #ff5252;
+    }
+
+    /* ★ GAME OVER 결과 텍스트 전용 스타일 (크고 선명하게) ★ */
+    .gameover-result-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+      width: 100%;
+    }
+
+    .gameover-reason {
+      font-family: 'Press Start 2P', 'Noto Sans KR', sans-serif;
+      font-size: 13px;
+      font-weight: 900;
+      color: #ff3344;
+      line-height: 1.3;
+      letter-spacing: 0.5px;
+      text-shadow: 2px 2px 0 #000, 0 0 8px rgba(255, 51, 68, 0.8);
+    }
+
+    .gameover-score {
+      font-family: 'Noto Sans KR', sans-serif;
+      font-size: 13.5px;
+      font-weight: 900;
+      color: #ffffff;
+      text-shadow: 1px 1px 2px #000;
+    }
+
+    .gameover-score-num {
+      font-family: 'Press Start 2P', monospace;
+      font-size: 18px;
+      color: #ffde59;
+      text-shadow: 2px 2px 0 #b38b14, 0 0 10px rgba(255, 222, 89, 0.8);
+      margin: 0 2px;
+    }
+
+    .gameover-notice {
+      font-family: 'Noto Sans KR', sans-serif;
+      font-size: 11px;
+      font-weight: 900;
+      color: #66fcf1;
+      letter-spacing: 0.5px;
+      text-shadow: 1px 1px 2px #000, 0 0 8px rgba(102, 252, 241, 0.6);
+      margin-top: 1px;
     }
 
     .profile-setup-box {
@@ -826,9 +871,9 @@
         <button class="title-start-btn" id="titleStartBtn" onclick="goToLobby()">[ START ]</button>
       </div>
 
-      <!-- 2단계: 프로필 설정 & 게임 룰 안내 화면 -->
+      <!-- 2단계: 프로필 설정 & 게임 룰 안내 화면 / 게임 오버 화면 -->
       <div id="gameOverlay" class="overlay">
-        <div class="creator-tag">PAWSE MAGAZINE</div>
+        <div class="creator-tag" id="overlaySubTag">PAWSE MAGAZINE</div>
         <h2 id="overlayTitle">BULLDOG GAME</h2>
         
         <div class="desc-box" id="overlayDescBox">
@@ -1039,6 +1084,7 @@
     const titleOverlay = document.getElementById('titleOverlay');
     const overlay = document.getElementById('gameOverlay');
     const overlayTitle = document.getElementById('overlayTitle');
+    const overlaySubTag = document.getElementById('overlaySubTag');
     const overlayDesc = document.getElementById('overlayDesc');
     const nicknameInput = document.getElementById('playerNickname');
     const nameBox = document.getElementById('nameBox');
@@ -1067,7 +1113,10 @@
       scene = 'LOBBY';
       titleOverlay.style.display = 'none';
       overlay.style.display = 'flex';
-      startBtn.style.display = 'flex';
+      overlaySubTag.style.display = 'block';
+      overlayTitle.innerText = "BULLDOG GAME";
+      overlayDesc.innerHTML = `⚠️ <b>예민보스 불독</b>의 뼈를 훔치세요!<br>불독이 <b>Grrr.. 뒤척일 때</b> 건드리면 극대노!<br>게이지가 <b>100%</b> 차면 기상 후 사망!`;
+      startBtn.style.display = 'block';
       nameBox.style.display = 'flex';
       gameOverActions.style.display = 'none';
     }
@@ -1153,7 +1202,7 @@
           timeLeft--;
           timeVal.innerText = timeLeft;
           if (timeLeft <= 0) {
-            triggerGameOver(`CLEAR! MISSION SUCCESS! 🦴 x${score}`);
+            triggerGameOver(`CLEAR! MISSION SUCCESS! 🦴`);
           }
         }
 
@@ -1190,6 +1239,7 @@
       '🔥 내 점수 자랑하기!'
     ];
 
+    // ★ GAME OVER 결과 텍스트 크기 및 가독성 대폭 강화 ★
     function triggerGameOver(msg) {
       scene = 'GAMEOVER';
       dogState = 'AWAKE';
@@ -1204,8 +1254,17 @@
 
       setTimeout(() => {
         overlay.style.display = 'flex';
+        overlaySubTag.style.display = 'none';
         overlayTitle.innerText = "GAME OVER";
-        overlayDesc.innerHTML = `${msg}<br><br>훔친 뼈다귀: <b style="color:#ffde59;font-size:14px;">${score}</b>개<br><span style="color:#66fcf1;font-size:9px;">온라인 랭킹에 기록되었습니다!</span>`;
+        
+        // 크고 선명한 결과 박스로 HTML 업데이트
+        overlayDesc.innerHTML = `
+          <div class="gameover-result-box">
+            <div class="gameover-reason">${msg}</div>
+            <div class="gameover-score">훔친 뼈다귀 : <span class="gameover-score-num">${score}</span> 개 🦴</div>
+            <div class="gameover-notice">온라인 랭킹에 기록되었습니다!</div>
+          </div>
+        `;
         
         startBtn.style.display = 'none';
         nameBox.style.display = 'none';
@@ -1684,7 +1743,7 @@
       ctx.restore();
     }
 
-    // ★ [핵심 개편] 오프닝과 외모가 100% 동일하게 통일된 인게임 불독 그래픽 ★
+    // 인게임 불독 렌더링
     function drawInGameBulldog() {
       ctx.save();
       let shakeX = 0;
@@ -1700,7 +1759,7 @@
 
       ctx.translate(shakeX, shakeY);
 
-      // 몸통 (오프닝과 동일한 짙은 초콜릿 브라운 #8d5524)
+      // 몸통
       ctx.fillStyle = '#8d5524';
       ctx.beginPath();
       ctx.ellipse(180, 112, 35, 22, 0, 0, Math.PI * 2);
@@ -1715,12 +1774,12 @@
       ctx.beginPath();
       ctx.ellipse(188, 126, 14, 9, 0, 0, Math.PI * 2);
       ctx.fill();
-      ctx.fillStyle = '#c68642'; // 오프닝과 동일한 베이지톤
+      ctx.fillStyle = '#c68642';
       ctx.fillRect(194, 127, 8, 7);
       ctx.fillStyle = '#212121';
       ctx.fillRect(200, 131, 3, 3);
 
-      // 스파이크 목줄 (붉은 가죽 + 은색 스터드)
+      // 스파이크 목줄
       ctx.fillStyle = '#d90429';
       ctx.fillRect(148, 82, 13, 40);
       ctx.fillStyle = '#edf2f4';
@@ -1739,13 +1798,13 @@
       ctx.fillRect(122, 131, 2, 3);
       ctx.fillRect(125, 132, 2, 3);
 
-      // 큰 머리 (오프닝과 완벽히 같은 #8d5524)
+      // 큰 머리
       ctx.fillStyle = '#8d5524';
       ctx.beginPath();
       ctx.ellipse(126, 89, 42, 36, 0, 0, Math.PI * 2);
       ctx.fill();
 
-      // 양쪽 귀 (오프닝의 진갈색 톤 #5c381c)
+      // 양쪽 귀
       ctx.fillStyle = '#5c381c';
       ctx.beginPath();
       ctx.ellipse(142, 60, 13, 19, 0.4, 0, Math.PI * 2);
@@ -1754,13 +1813,13 @@
       ctx.ellipse(96, 65, 11, 17, -0.3, 0, Math.PI * 2);
       ctx.fill();
 
-      // ★ 오프닝과 동일한 도톰한 주둥이와 볼살 (#c68642 베이지)
+      // 주둥이와 볼살
       ctx.fillStyle = '#c68642';
       ctx.beginPath();
       ctx.ellipse(104, 100, 26, 20, 0, 0, Math.PI * 2);
       ctx.fill();
 
-      // 큰 검은 코와 광택 하이라이트 (오프닝 코 형태)
+      // 코
       ctx.fillStyle = '#111';
       ctx.beginPath();
       ctx.ellipse(92, 92, 10, 7, 0, 0, Math.PI * 2);
@@ -1768,9 +1827,7 @@
       ctx.fillStyle = '#666';
       ctx.fillRect(89, 89, 3, 2);
 
-      // 3가지 상태별 표정 & 이빨 렌더링
       if (dogState === 'SLEEPING') {
-        // 잠잘 때: 감긴 두 눈
         ctx.strokeStyle = '#222';
         ctx.lineWidth = 3;
         ctx.beginPath();
@@ -1781,19 +1838,16 @@
         ctx.arc(96, 76, 5, 0.3, Math.PI - 0.3);
         ctx.stroke();
 
-        // 삐져나온 귀여운 덧니 1개
         ctx.fillStyle = '#ffffff';
         ctx.beginPath();
         ctx.moveTo(86, 105); ctx.lineTo(91, 105); ctx.lineTo(88, 111);
         ctx.closePath();
         ctx.fill();
 
-        // 쿨쿨 침방울
         ctx.fillStyle = '#66fcf1';
         ctx.fillRect(84, 108, 4, 6);
       } 
       else if (dogState === 'STIRRING') {
-        // 뒤척일 때: 으르렁 실눈 + 오프닝 뾰족 이빨 살짝 노출
         ctx.strokeStyle = '#221005';
         ctx.lineWidth = 3;
 
@@ -1813,13 +1867,11 @@
         ctx.fillStyle = '#000';
         ctx.fillRect(96, 73, 3, 3);
 
-        // 으르렁 벌린 어두운 입
         ctx.fillStyle = '#7f0000';
         ctx.beginPath();
         ctx.ellipse(92, 106, 14, 8, 0, 0, Math.PI * 2);
         ctx.fill();
 
-        // 날카로운 위아래 이빨
         ctx.fillStyle = '#ffffff';
         ctx.beginPath();
         ctx.moveTo(82, 102); ctx.lineTo(86, 102); ctx.lineTo(84, 107);
@@ -1829,8 +1881,6 @@
         ctx.fill();
       } 
       else {
-        // AWAKE: 오프닝 포효 장면처럼 입을 쩌억 벌리고 붉은 핏발 선 눈으로 포효!
-        // 붉은 눈 (오프닝의 삼백안 안광)
         ctx.fillStyle = '#ffffff';
         ctx.beginPath();
         ctx.arc(114, 78, 11, 0, Math.PI * 2);
@@ -1849,7 +1899,6 @@
         ctx.arc(95, 74, 3, 0, Math.PI * 2);
         ctx.fill();
 
-        // 쩌억 벌린 거대한 입 내부 (#7f0000) & 혓바닥
         ctx.fillStyle = '#7f0000';
         ctx.beginPath();
         ctx.ellipse(88, 106, 20, 15, 0, 0, Math.PI * 2);
@@ -1860,9 +1909,7 @@
         ctx.ellipse(90, 111, 10, 6, 0, 0, Math.PI * 2);
         ctx.fill();
 
-        // 오프닝과 완벽히 같은 날카로운 톱니바퀴 삼각형 이빨들
         ctx.fillStyle = '#ffffff';
-        // 윗니 4개
         for (let i = 0; i < 4; i++) {
           const tx = 74 + i * 8;
           ctx.beginPath();
@@ -1872,7 +1919,6 @@
           ctx.closePath();
           ctx.fill();
         }
-        // 아랫니 4개
         for (let j = 0; j < 4; j++) {
           const bx = 76 + j * 8;
           ctx.beginPath();
@@ -1883,7 +1929,6 @@
           ctx.fill();
         }
 
-        // 극대노 핏대 마크
         ctx.strokeStyle = '#ff1744';
         ctx.lineWidth = 2.5;
         ctx.beginPath();
