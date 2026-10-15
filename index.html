@@ -236,26 +236,26 @@
       display: none;
       flex-direction: column;
       align-items: center;
-      justify-content: space-evenly;
+      justify-content: center;
+      gap: 5px;
       text-align: center;
-      padding: 8px 12px;
+      padding: 6px 8px;
       z-index: 20;
     }
 
     .creator-tag {
       font-family: 'Press Start 2P', monospace;
-      font-size: 10.5px;
+      font-size: 9.5px;
       color: #ffd700;
       letter-spacing: 1.5px;
       text-shadow: 0 0 8px rgba(255, 215, 0, 0.8), 2px 2px 0 #000;
     }
 
     .overlay h2 {
-      font-size: 17px;
+      font-size: 14px;
       color: #ff2a2a;
-      line-height: 1.2;
+      line-height: 1.1;
       letter-spacing: 1px;
-      margin-top: -2px;
       text-shadow: 2px 2px 0 #7a0000, -1px -1px 0 #000;
     }
 
@@ -263,16 +263,16 @@
       background: rgba(18, 24, 32, 0.88);
       border: 1px solid #45a29e;
       border-radius: 6px;
-      padding: 6px 8px;
+      padding: 5px 8px;
       width: 95%;
     }
 
     .desc-box p {
       font-family: 'Noto Sans KR', sans-serif;
-      font-size: 9.5px;
+      font-size: 9px;
       font-weight: 700;
       color: #ffde59;
-      line-height: 1.45;
+      line-height: 1.4;
       text-shadow: 1px 1px 2px #000, -1px -1px 2px #000;
     }
 
@@ -280,49 +280,60 @@
       color: #ff5252;
     }
 
-    /* ★ GAME OVER 결과 텍스트 전용 스타일 (크고 선명하게) ★ */
-    .gameover-result-box {
+    /* ★ 2. GAME OVER 전용 통합 민트색 박스 (컴팩트 & 잘림 방지) ★ */
+    .gameover-mint-box {
+      background: rgba(11, 20, 24, 0.95);
+      border: 2px solid #66fcf1;
+      border-radius: 8px;
+      padding: 6px 10px;
+      width: 96%;
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 5px;
-      width: 100%;
+      gap: 3px;
+      box-shadow: 0 0 15px rgba(102, 252, 241, 0.25);
     }
 
-    .gameover-reason {
-      font-family: 'Press Start 2P', 'Noto Sans KR', sans-serif;
-      font-size: 13px;
-      font-weight: 900;
-      color: #ff3344;
-      line-height: 1.3;
-      letter-spacing: 0.5px;
-      text-shadow: 2px 2px 0 #000, 0 0 8px rgba(255, 51, 68, 0.8);
-    }
-
-    .gameover-score {
-      font-family: 'Noto Sans KR', sans-serif;
-      font-size: 13.5px;
-      font-weight: 900;
-      color: #ffffff;
-      text-shadow: 1px 1px 2px #000;
-    }
-
-    .gameover-score-num {
+    .gameover-title-text {
       font-family: 'Press Start 2P', monospace;
-      font-size: 18px;
-      color: #ffde59;
-      text-shadow: 2px 2px 0 #b38b14, 0 0 10px rgba(255, 222, 89, 0.8);
-      margin: 0 2px;
+      font-size: 13px;
+      color: #ff2a2a;
+      letter-spacing: 1px;
+      text-shadow: 2px 2px 0 #7a0000, -1px -1px 0 #000;
     }
 
-    .gameover-notice {
+    .gameover-reason-text {
+      font-family: 'Press Start 2P', 'Noto Sans KR', sans-serif;
+      font-size: 9.5px;
+      font-weight: 900;
+      color: #ffde59;
+      line-height: 1.25;
+      letter-spacing: 0.5px;
+      text-shadow: 1px 1px 0 #000;
+    }
+
+    .gameover-score-row {
       font-family: 'Noto Sans KR', sans-serif;
       font-size: 11px;
       font-weight: 900;
+      color: #ffffff;
+      margin-top: 1px;
+    }
+
+    .gameover-score-highlight {
+      font-family: 'Press Start 2P', monospace;
+      font-size: 14px;
+      color: #ffde59;
+      text-shadow: 1px 1px 0 #b38b14;
+      margin: 0 2px;
+    }
+
+    .gameover-notice-text {
+      font-family: 'Noto Sans KR', sans-serif;
+      font-size: 9.5px;
+      font-weight: 700;
       color: #66fcf1;
       letter-spacing: 0.5px;
-      text-shadow: 1px 1px 2px #000, 0 0 8px rgba(102, 252, 241, 0.6);
-      margin-top: 1px;
     }
 
     .profile-setup-box {
@@ -334,8 +345,8 @@
     }
 
     .slot-avatar-wrapper {
-      width: 42px;
-      height: 42px;
+      width: 40px;
+      height: 40px;
       border-radius: 50%;
       border: 2px solid #ffde59;
       background: #111;
@@ -394,7 +405,7 @@
       background: #ffde59;
       border: 3px solid #ffffff;
       border-radius: 8px;
-      padding: 10px 22px;
+      padding: 9px 20px;
       cursor: pointer;
       box-shadow: 0 4px 0 #b38b14, 0 6px 12px rgba(0,0,0,0.6);
       transition: transform 0.05s, box-shadow 0.05s;
@@ -409,44 +420,46 @@
       box-shadow: 0 1px 0 #b38b14;
     }
 
+    /* 게임오버 액션 영역 (버튼이 위로 올라오도록 최적화) */
     .gameover-actions {
       display: none;
       flex-direction: column;
       align-items: center;
-      gap: 6px;
-      width: 100%;
+      gap: 4px;
+      width: 96%;
+      margin-top: 2px;
     }
 
     .share-btn {
       font-family: 'Noto Sans KR', sans-serif;
       font-weight: 900;
-      font-size: 11px;
+      font-size: 10px;
       background: #45a29e;
       color: #fff;
       border: 2px solid #66fcf1;
       border-radius: 6px;
-      padding: 6px 12px;
+      padding: 5px 10px;
       cursor: pointer;
-      box-shadow: 0 3px 0 #1f4a47;
+      box-shadow: 0 2px 0 #1f4a47;
       transition: transform 0.05s;
-      width: 90%;
+      width: 100%;
     }
     .share-btn:active {
       transform: translateY(2px);
-      box-shadow: 0 1px 0 #1f4a47;
+      box-shadow: 0 0 0 #1f4a47;
     }
 
     .gameover-comment-box {
       display: flex;
-      width: 90%;
+      width: 100%;
       gap: 4px;
     }
 
     .gameover-comment-input {
       flex: 1;
       font-family: 'Noto Sans KR', sans-serif;
-      font-size: 10px;
-      padding: 5px 8px;
+      font-size: 9.5px;
+      padding: 4px 6px;
       background: #111;
       border: 1px solid #ffde59;
       border-radius: 4px;
@@ -456,7 +469,7 @@
 
     .gameover-comment-btn {
       font-family: 'Noto Sans KR', sans-serif;
-      font-size: 10px;
+      font-size: 9.5px;
       font-weight: 900;
       background: #ffde59;
       color: #111;
@@ -468,14 +481,16 @@
 
     .retry-btn {
       font-family: 'Press Start 2P', monospace;
-      font-size: 11px;
+      font-size: 10.5px;
       background: #ff3344;
       color: #fff;
       border: 2px solid #ffde59;
       border-radius: 6px;
-      padding: 7px 16px;
+      padding: 6px 18px;
       cursor: pointer;
       box-shadow: 0 3px 0 #900;
+      width: 100%;
+      margin-top: 2px;
     }
     .retry-btn:active {
       transform: translateY(2px);
@@ -897,6 +912,7 @@
         
         <button class="rect-start-btn" id="startBtn">GAME START</button>
 
+        <!-- 게임오버 액션 영역 -->
         <div class="gameover-actions" id="gameOverActions">
           <button class="share-btn" id="shareBtn" onclick="openShareModal()">🔗 친구랑 내기 할 사람</button>
           
@@ -1003,6 +1019,20 @@
     const ctx = canvas.getContext('2d');
     ctx.imageSmoothingEnabled = false;
 
+    // ★ 1. 기기 진동 (햅틱 피드백) 함수 (완전 무료) ★
+    function triggerHaptic(type) {
+      try {
+        if (!navigator.vibrate) return;
+        if (type === 'tap') {
+          navigator.vibrate(18); // 뼈 훔칠 때 톡 치는 가벼운 진동
+        } else if (type === 'warning') {
+          navigator.vibrate(40); // 으르렁거릴 때 훔치는 경고 진동
+        } else if (type === 'gameover') {
+          navigator.vibrate([120, 40, 140]); // 물렸을 때 덜컹거리는 강한 진동
+        }
+      } catch(e) {}
+    }
+
     const dogAvatars = ['🐶', '🐕', '🐩', '🦮', '🐕‍🦺', '🦊', '🐺', '🐾'];
     
     function getDeterministicAvatar(name) {
@@ -1085,6 +1115,7 @@
     const overlay = document.getElementById('gameOverlay');
     const overlayTitle = document.getElementById('overlayTitle');
     const overlaySubTag = document.getElementById('overlaySubTag');
+    const overlayDescBox = document.getElementById('overlayDescBox');
     const overlayDesc = document.getElementById('overlayDesc');
     const nicknameInput = document.getElementById('playerNickname');
     const nameBox = document.getElementById('nameBox');
@@ -1109,13 +1140,19 @@
 
     function goToLobby() {
       unlockAudio();
+      triggerHaptic('tap');
       playTone(520, 'sine', 0.1);
       scene = 'LOBBY';
       titleOverlay.style.display = 'none';
       overlay.style.display = 'flex';
       overlaySubTag.style.display = 'block';
+      overlayTitle.style.display = 'block';
       overlayTitle.innerText = "BULLDOG GAME";
+      
+      // 2단계 원래 설명 박스로 복원
+      overlayDescBox.className = 'desc-box';
       overlayDesc.innerHTML = `⚠️ <b>예민보스 불독</b>의 뼈를 훔치세요!<br>불독이 <b>Grrr.. 뒤척일 때</b> 건드리면 극대노!<br>게이지가 <b>100%</b> 차면 기상 후 사망!`;
+      
       startBtn.style.display = 'block';
       nameBox.style.display = 'flex';
       gameOverActions.style.display = 'none';
@@ -1123,6 +1160,7 @@
 
     startBtn.addEventListener('click', () => {
       unlockAudio();
+      triggerHaptic('tap');
       startGame();
     });
 
@@ -1175,9 +1213,11 @@
 
       if (dogState === 'STIRRING') {
         anger += 45;
+        triggerHaptic('warning'); // 경고 진동
         playTone(210, 'sawtooth', 0.2, 0.25);
       } else {
         anger += 16 + Math.random() * 6;
+        triggerHaptic('tap'); // 일반 훔치기 톡 진동
       }
 
       if (anger >= 100) {
@@ -1239,11 +1279,12 @@
       '🔥 내 점수 자랑하기!'
     ];
 
-    // ★ GAME OVER 결과 텍스트 크기 및 가독성 대폭 강화 ★
+    // ★ 2. 게임오버 화면: 민트색 박스 통합 및 위로 정렬 (RETRY 버튼 절대 안 잘림) ★
     function triggerGameOver(msg) {
       scene = 'GAMEOVER';
       dogState = 'AWAKE';
       stealBtn.disabled = true;
+      triggerHaptic('gameover'); // 물렸을 때 강한 진동
       playTone(70, 'square', 0.6, 0.3);
 
       const currentName = nicknameInput.value.trim() || '익명 도둑';
@@ -1255,15 +1296,15 @@
       setTimeout(() => {
         overlay.style.display = 'flex';
         overlaySubTag.style.display = 'none';
-        overlayTitle.innerText = "GAME OVER";
+        overlayTitle.style.display = 'none'; // 상단 제목 숨겨서 공간 확보
         
-        // 크고 선명한 결과 박스로 HTML 업데이트
+        // 민트색 박스 클래스 적용
+        overlayDescBox.className = 'gameover-mint-box';
         overlayDesc.innerHTML = `
-          <div class="gameover-result-box">
-            <div class="gameover-reason">${msg}</div>
-            <div class="gameover-score">훔친 뼈다귀 : <span class="gameover-score-num">${score}</span> 개 🦴</div>
-            <div class="gameover-notice">온라인 랭킹에 기록되었습니다!</div>
-          </div>
+          <div class="gameover-title-text">GAME OVER</div>
+          <div class="gameover-reason-text">${msg}</div>
+          <div class="gameover-score-row">훔친 뼈다귀 : <span class="gameover-score-highlight">${score}</span> 개 🦴</div>
+          <div class="gameover-notice-text">온라인 랭킹에 기록되었습니다!</div>
         `;
         
         startBtn.style.display = 'none';
@@ -1273,10 +1314,12 @@
     }
 
     function openShareModal() {
+      triggerHaptic('tap');
       document.getElementById('shareModalOverlay').style.display = 'flex';
     }
 
     function closeShareModal(e) {
+      triggerHaptic('tap');
       document.getElementById('shareModalOverlay').style.display = 'none';
     }
 
@@ -1286,12 +1329,14 @@
     }
 
     function copyGameLink() {
+      triggerHaptic('tap');
       navigator.clipboard.writeText(window.location.href).then(() => {
         alert("게임 링크가 클립보드에 복사되었습니다! 친구들에게 공유해보세요 🦴");
       });
     }
 
     function shareToKakao() {
+      triggerHaptic('tap');
       const shareData = {
         title: 'PAWSE MAGAZINE BULLDOG GAME',
         text: getShareText(),
@@ -1309,17 +1354,20 @@
     }
 
     function shareToX() {
+      triggerHaptic('tap');
       const text = encodeURIComponent(getShareText());
       const url = encodeURIComponent(window.location.href);
       window.open(`https://twitter.com/intent/tweet?text=${text}&url=${url}`, '_blank');
     }
 
     function shareToFacebook() {
+      triggerHaptic('tap');
       const url = encodeURIComponent(window.location.href);
       window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}`, '_blank');
     }
 
     function shareToInstagram() {
+      triggerHaptic('tap');
       const text = `${getShareText()} ${window.location.href}`;
       navigator.clipboard.writeText(text).then(() => {
         alert("점수 및 게임 링크가 복사되었습니다! 인스타그램 스토리나 DM에 바로 붙여넣어 보세요.");
@@ -1328,6 +1376,7 @@
     }
 
     function submitGameOverComment() {
+      triggerHaptic('tap');
       const goInput = document.getElementById('goCommentInput');
       const text = goInput.value.trim();
       const name = nicknameInput.value.trim() || '익명 도둑';
@@ -1459,6 +1508,7 @@
       });
 
     function submitComment() {
+      triggerHaptic('tap');
       const commentInput = document.getElementById('commentInput');
       const text = commentInput.value.trim();
       const name = nicknameInput.value.trim() || '익명 도둑';
